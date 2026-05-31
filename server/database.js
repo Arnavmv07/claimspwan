@@ -444,11 +444,12 @@ const CONSOLE_SALES = [
     id: 'xbox-forza-horizon-5',
     title: "Forza Horizon 5",
     platform: "Xbox",
+    steamAppID: '1551360',
     original_price: "$59.99",
     sale_price: "$29.99",
     discount: "50% OFF",
     image_url: "https://cdn.akamai.steamstatic.com/steam/apps/1551360/header.jpg",
-    claim_url: "https://www.xbox.com/en-US/games/store/forza-horizon-5/9nkx70bbcdgs",
+    claim_url: "https://www.xbox.com/en-us/games/store/forza-horizon-5/9PMV0M206K2H",
     upvotes: 684,
     rating: 4.8
   },
@@ -456,11 +457,12 @@ const CONSOLE_SALES = [
     id: 'xbox-halo-infinite',
     title: "Halo Infinite (Campaign)",
     platform: "Xbox",
+    steamAppID: '1240440',
     original_price: "$59.99",
     sale_price: "$19.99",
     discount: "67% OFF",
     image_url: "https://cdn.akamai.steamstatic.com/steam/apps/1240440/header.jpg",
-    claim_url: "https://www.xbox.com/en-US/games/store/halo-infinite-campaign/9np1p1wfs0lb",
+    claim_url: "https://www.xbox.com/en-us/games/store/halo-infinite-campaign/9np1p1wfs0lb",
     upvotes: 420,
     rating: 4.3
   },
@@ -468,11 +470,12 @@ const CONSOLE_SALES = [
     id: 'xbox-elden-ring',
     title: "Elden Ring",
     platform: "Xbox",
+    steamAppID: '1245620',
     original_price: "$59.99",
     sale_price: "$39.99",
     discount: "33% OFF",
     image_url: "https://cdn.akamai.steamstatic.com/steam/apps/1245620/header.jpg",
-    claim_url: "https://www.xbox.com/en-US/games/store/elden-ring/9p3j32ctxlrx",
+    claim_url: "https://www.xbox.com/en-us/games/store/elden-ring/9n1z039d0pxn",
     upvotes: 954,
     rating: 4.9
   },
@@ -480,11 +483,12 @@ const CONSOLE_SALES = [
     id: 'xbox-cyberpunk-2077',
     title: "Cyberpunk 2077",
     platform: "Xbox",
+    steamAppID: '1091500',
     original_price: "$59.99",
     sale_price: "$29.99",
     discount: "50% OFF",
     image_url: "https://cdn.akamai.steamstatic.com/steam/apps/1091500/header.jpg",
-    claim_url: "https://www.xbox.com/en-US/games/store/cyberpunk-2077/9nkx70bbcdgs",
+    claim_url: "https://www.xbox.com/en-us/games/store/cyberpunk-2077/bx3m8l83bbrw",
     upvotes: 512,
     rating: 4.2
   },
@@ -492,11 +496,12 @@ const CONSOLE_SALES = [
     id: 'ps5-spiderman-2',
     title: "Marvel's Spider-Man 2",
     platform: "PS5",
+    steamAppID: '2643200',
     original_price: "$69.99",
     sale_price: "$49.99",
     discount: "28% OFF",
     image_url: "https://image.api.playstation.com/vulcan/ap/rnd/202306/1219/1c7b75d8ed9271516546560d219ad0b22ee0a263b4537bd8.png",
-    claim_url: "https://store.playstation.com/en-us/concept/10002456",
+    claim_url: "https://store.playstation.com/en-us/concept/10002434",
     upvotes: 892,
     rating: 4.9
   },
@@ -504,11 +509,12 @@ const CONSOLE_SALES = [
     id: 'ps5-god-of-war-ragnarok',
     title: "God of War Ragnarök",
     platform: "PS5",
+    steamAppID: '2322010',
     original_price: "$69.99",
     sale_price: "$39.99",
     discount: "43% OFF",
     image_url: "https://image.api.playstation.com/vulcan/ap/rnd/202503/2016/b69c06fb108299866057126b0d3a0530bdf96a39d2ce1cb9.png",
-    claim_url: "https://store.playstation.com/en-us/concept/10001850",
+    claim_url: "https://store.playstation.com/en-us/concept/10001901",
     upvotes: 754,
     rating: 4.8
   },
@@ -516,11 +522,12 @@ const CONSOLE_SALES = [
     id: 'ps5-last-of-us-part-1',
     title: "The Last of Us Part I",
     platform: "PS5",
+    steamAppID: '1888930',
     original_price: "$69.99",
-    sale_price: "$34.99",
-    discount: "50% OFF",
+    sale_price: "$39.99",
+    discount: "43% OFF",
     image_url: "https://image.api.playstation.com/vulcan/ap/rnd/202206/0720/eEczyEMDd2BLa3dtkGJVE9Id.png",
-    claim_url: "https://store.playstation.com/en-us/concept/10002694",
+    claim_url: "https://store.playstation.com/en-us/concept/10003923",
     upvotes: 620,
     rating: 4.7
   },
@@ -528,11 +535,12 @@ const CONSOLE_SALES = [
     id: 'ps5-demons-souls',
     title: "Demon's Souls",
     platform: "PS5",
+    steamAppID: '',
     original_price: "$69.99",
     sale_price: "$29.99",
     discount: "57% OFF",
     image_url: "https://image.api.playstation.com/vulcan/ap/rnd/202210/0315/asGInU6zOf8SvsD4bxbXGdqU.png",
-    claim_url: "https://store.playstation.com/en-us/concept/10001224",
+    claim_url: "https://store.playstation.com/en-us/concept/10000282",
     upvotes: 412,
     rating: 4.6
   }
@@ -589,7 +597,35 @@ async function getSales() {
     console.error('Error fetching CheapShark PC deals:', error);
   }
 
-  const mergedSales = [...pcSales, ...CONSOLE_SALES];
+  const detailedConsolePromises = CONSOLE_SALES.map(async (deal) => {
+    let originalPrice = deal.original_price;
+    let salePrice = deal.sale_price;
+    let discount = deal.discount;
+
+    if (deal.steamAppID && deal.platform !== 'PS5') {
+      const steamDetails = await fetchSteamDetails(deal.steamAppID);
+      if (steamDetails) {
+        if (steamDetails.original_price) originalPrice = steamDetails.original_price;
+        if (steamDetails.sale_price) salePrice = steamDetails.sale_price;
+        if (steamDetails.discount) {
+          discount = steamDetails.discount;
+        } else {
+          discount = "0% OFF";
+        }
+      }
+    }
+
+    return {
+      ...deal,
+      original_price: originalPrice,
+      sale_price: salePrice,
+      discount: discount
+    };
+  });
+
+  const resolvedConsoleSales = await Promise.all(detailedConsolePromises);
+
+  const mergedSales = [...pcSales, ...resolvedConsoleSales];
   salesCache.data = mergedSales;
   salesCache.expiry = now + SALES_CACHE_DURATION;
   return mergedSales;

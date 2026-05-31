@@ -7,7 +7,8 @@ export default function GameGrid({
   onGameSelect, 
   onClaimClick,
   onAdClick,
-  onAdImpression
+  onAdImpression,
+  currency
 }) {
   if (games.length === 0) {
     return (
@@ -28,6 +29,7 @@ export default function GameGrid({
         game={game} 
         onGameSelect={onGameSelect}
         onClaimClick={onClaimClick}
+        currency={currency}
       />
     ));
   };

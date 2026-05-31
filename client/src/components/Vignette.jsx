@@ -66,7 +66,7 @@ export default function Vignette({
       <button 
         onClick={onClose}
         className="absolute top-6 right-6 p-2 rounded-full bg-dark-card border border-[#24324D] text-gray-400 hover:text-white hover:border-accent-neon transition-all"
-        title="Return to Claimspwan"
+        title="Return to ClaimSpawn"
       >
         <X class="w-5 h-5" />
       </button>
@@ -92,10 +92,10 @@ export default function Vignette({
 
         <div>
           <h2 className="text-xl md:text-2xl font-black text-white">
-            You are leaving Claimspwan for <span className="text-accent-neon">{game.platform}</span>
+            You are leaving ClaimSpawn for <span className="text-accent-neon">{game.platform}</span>
           </h2>
           <p className="text-xs text-gray-400 mt-2 max-w-md mx-auto leading-relaxed">
-            Please wait while we establish a secure connection. Your support through our affiliate tags helps keep Claimspwan 100% free!
+            Please wait while we establish a secure connection. Your support through our affiliate tags helps keep ClaimSpawn 100% free!
           </p>
         </div>
 

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Percent, ArrowRight, ExternalLink, ThumbsUp, Search } from 'lucide-react';
-import AdSlot from './AdSlot';
+import { convertPrice } from '../utils/currency';
 
-export default function SaleView({ sales, loading, error, onAdClick, onAdImpression }) {
+export default function SaleView({ sales, loading, error, onAdClick, onAdImpression, currency }) {
   const [activeSubTab, setActiveSubTab] = useState('PC'); // 'PC' | 'Xbox' | 'PS5'
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('default'); // 'default' | 'alpha-asc' | 'alpha-desc' | 'price-asc' | 'price-desc'
@@ -180,17 +180,8 @@ export default function SaleView({ sales, loading, error, onAdClick, onAdImpress
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 select-none pb-24">
           {filteredSales.map((deal, idx) => {
-            // Proactively insert programmatic native ad cards inside the grid to monetize traffic
-            const shouldShowAd = idx > 0 && idx % 4 === 0;
-
             return (
               <React.Fragment key={deal.id}>
-                {shouldShowAd && (
-                  <div className="bg-[#121A2A] border border-accent-purple/20 rounded-2xl p-4 glass shadow-lg relative flex flex-col justify-between h-[360px] overflow-hidden">
-                    <span className="absolute top-2.5 right-2.5 z-10 text-[8px] font-black uppercase tracking-widest px-2 py-0.5 bg-accent-purple/25 border border-accent-purple/40 text-accent-purple rounded shadow">SPONSORED</span>
-                    <AdSlot type="in-feed" onClick={onAdClick} onImpression={onAdImpression} />
-                  </div>
-                )}
 
                 <div 
                   onClick={(e) => handleGetDealClick(e, deal)}
@@ -244,10 +235,10 @@ export default function SaleView({ sales, loading, error, onAdClick, onAdImpress
                     <div className="mt-4 pt-3 border-t border-[#24324D] flex items-center justify-between">
                       <div className="flex flex-col">
                         <span className="text-[10px] text-gray-500 uppercase tracking-widest line-through">
-                          {deal.original_price}
+                          {convertPrice(deal.original_price, currency)}
                         </span>
                         <span className="text-sm font-black text-accent-neon">
-                          {deal.sale_price}
+                          {convertPrice(deal.sale_price, currency)}
                         </span>
                       </div>
 

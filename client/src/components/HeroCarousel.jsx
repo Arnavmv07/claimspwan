@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Eye, ArrowLeft, ArrowRight, ShieldAlert, Award } from 'lucide-react';
+import { convertPrice } from '../utils/currency';
 
-export default function HeroCarousel({ activeGames, onGameSelect }) {
+export default function HeroCarousel({ activeGames, onGameSelect, currency }) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   // Filter games that are "Active" and are of high original price value (e.g. >= $29.99 or custom)
@@ -88,7 +89,7 @@ export default function HeroCarousel({ activeGames, onGameSelect }) {
 
             {/* Value comparison */}
             <div className="flex items-center gap-3 mt-3 text-xs md:text-sm font-semibold">
-              <span className="text-gray-400">Value: <span className="line-through">{game.original_price}</span></span>
+              <span className="text-gray-400">Value: <span className="line-through">{convertPrice(game.original_price, currency)}</span></span>
               <span className="text-accent-neon font-black text-sm uppercase tracking-wider">{game.discount}</span>
               {game.epic_creator_tag && (
                 <span className="text-[10px] font-extrabold text-accent-purple tracking-widest bg-accent-purple/10 border border-accent-purple/20 px-2 py-0.5 rounded">

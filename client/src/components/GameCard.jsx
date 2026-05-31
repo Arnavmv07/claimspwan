@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ThumbsUp, Gift, ExternalLink } from 'lucide-react';
+import { convertPrice } from '../utils/currency';
 
 const BRAND_THEMES = {
   'Steam': {
@@ -58,7 +59,7 @@ const BRAND_THEMES = {
   }
 };
 
-export default function GameCard({ game, onGameSelect, onClaimClick }) {
+export default function GameCard({ game, onGameSelect, onClaimClick, currency }) {
   const theme = BRAND_THEMES[game.platform] || BRAND_THEMES['default'];
   const isUpcoming = game.status === 'Upcoming';
   const isExpired = game.status === 'Expired';
@@ -122,7 +123,7 @@ export default function GameCard({ game, onGameSelect, onClaimClick }) {
         <div className="mt-4 pt-3 border-t border-[#24324D] flex items-center justify-between">
           <div className="flex flex-col">
             <span className="text-[10px] text-gray-500 uppercase tracking-widest line-through">
-              {game.original_price}
+              {convertPrice(game.original_price, currency)}
             </span>
             <span className={`text-xs font-black uppercase tracking-wider ${isExpired ? 'text-gray-500' : 'text-accent-neon'}`}>
               {isExpired ? 'EXPIRED' : '100% OFF'}

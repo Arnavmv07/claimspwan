@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, ThumbsUp, ThumbsDown, Star, Calendar, Cpu, ShieldCheck, Gift, CheckCircle2, Bookmark, Flame } from 'lucide-react';
 import AdSlot from './AdSlot';
+import { convertPrice } from '../utils/currency';
 
 export default function GameDetail({ 
   gameId, 
@@ -8,7 +9,8 @@ export default function GameDetail({
   onClaimClick,
   allGames,
   onAdClick,
-  onAdImpression
+  onAdImpression,
+  currency
 }) {
   const [game, setGame] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -247,7 +249,7 @@ export default function GameDetail({
 
                 {/* Original price row */}
                 <div className="flex items-center gap-3 text-sm font-semibold mb-6">
-                  <span className="text-gray-400">Original price: <span className="line-through">{game.original_price}</span></span>
+                  <span className="text-gray-400">Original price: <span className="line-through">{convertPrice(game.original_price, currency)}</span></span>
                   <span className="text-accent-neon font-black uppercase">{game.discount}</span>
                   {game.epic_creator_tag && (
                     <span className="text-[9px] font-black text-accent-purple bg-accent-purple/10 border border-accent-purple/20 px-2 py-0.5 rounded uppercase">

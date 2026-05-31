@@ -1,5 +1,6 @@
 import React from 'react';
 import { Search, Flame, Calendar, History, ShieldAlert, Award, Percent } from 'lucide-react';
+import { CURRENCIES } from '../utils/currency';
 
 export default function Header({ 
   activeTab, 
@@ -7,7 +8,9 @@ export default function Header({
   searchQuery, 
   setSearchQuery, 
   onLogoClick,
-  adStats
+  adStats,
+  currency,
+  setCurrency
 }) {
   return (
     <header className="sticky top-0 z-40 w-full glass-nav shadow-lg">
@@ -86,16 +89,31 @@ export default function Header({
           </button>
         </nav>
 
-        {/* Right: Search Input & Ad-Hub Status */}
+        {/* Right: Currency Selector & Search Box */}
         <div className="flex items-center gap-3">
+          {/* Currency Dropdown Selector */}
+          <div className="relative select-none">
+            <select
+              value={currency || 'USD'}
+              onChange={(e) => setCurrency(e.target.value)}
+              className="px-2.5 py-1.5 text-[11px] bg-dark-bg border border-[#24324D] rounded-xl text-gray-300 focus:outline-none focus:border-accent-neon font-black cursor-pointer hover:bg-dark-card/65 transition-all shadow-inner animate-fade-in"
+            >
+              {Object.keys(CURRENCIES).map((c) => (
+                <option key={c} value={c} className="font-extrabold text-gray-300 bg-[#0E1525]">
+                  {c}
+                </option>
+              ))}
+            </select>
+          </div>
+
           {/* Search Box */}
-          <div className="relative w-40 sm:w-60 md:w-64 select-none">
+          <div className="relative w-36 sm:w-52 md:w-56 select-none">
             <input
               type="text"
               placeholder="Search free games..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 text-xs bg-dark-bg border border-[#24324D] rounded-xl text-gray-200 focus:outline-none focus:border-accent-neon placeholder-gray-500 transition-all font-medium"
+              className="w-full pl-9 pr-4 py-2 text-xs bg-dark-bg border border-[#24324D] rounded-xl text-gray-200 focus:outline-none focus:border-accent-neon placeholder-gray-500 transition-all font-medium shadow-inner"
             />
             <Search class="absolute left-3 top-2.5 w-4 h-4 text-gray-500" />
           </div>

@@ -8,6 +8,7 @@ import Vignette from './components/Vignette';
 import PublisherHUD from './components/PublisherHUD';
 import AdSlot from './components/AdSlot';
 import SaleView from './components/SaleView';
+import { CURRENCIES, convertPrice } from './utils/currency';
 
 const AD_CPM_RATES = {
   'leaderboard': 2.50,
@@ -26,6 +27,9 @@ export default function App() {
   const [sales, setSales] = useState([]);
   const [salesLoading, setSalesLoading] = useState(true);
   const [salesError, setSalesError] = useState(null);
+
+  // Currency State
+  const [currency, setCurrency] = useState('USD');
 
   // Filters and Routing States
   const [activeTab, setActiveTab] = useState('Active'); // 'Active' | 'Upcoming' | 'Expired' | 'Sale'
@@ -196,6 +200,8 @@ export default function App() {
         setSearchQuery={setSearchQuery}
         onLogoClick={() => handleSelectGame(null)}
         adStats={adStats}
+        currency={currency}
+        setCurrency={setCurrency}
       />
 
       {/* Main Core Section */}
@@ -233,6 +239,7 @@ export default function App() {
             allGames={games}
             onAdClick={handleAdClick}
             onAdImpression={handleAdImpression}
+            currency={currency}
           />
         ) : activeTab === 'Sale' ? (
           /* Sale Dashboard Page */
@@ -242,6 +249,7 @@ export default function App() {
             error={salesError}
             onAdClick={handleAdClick}
             onAdImpression={handleAdImpression}
+            currency={currency}
           />
         ) : (
           /* Dashboard Landing Page Grid */
@@ -258,6 +266,7 @@ export default function App() {
               <HeroCarousel 
                 activeGames={activeGames} 
                 onGameSelect={(id) => handleSelectGame(id)} 
+                currency={currency}
               />
             )}
 
@@ -268,6 +277,7 @@ export default function App() {
               onClaimClick={handleClaimClick}
               onAdClick={handleAdClick}
               onAdImpression={handleAdImpression}
+              currency={currency}
             />
           </>
         )}
@@ -283,6 +293,7 @@ export default function App() {
           }} 
           onAdClick={handleAdClick}
           onAdImpression={handleAdImpression}
+          currency={currency}
         />
       )}
 
