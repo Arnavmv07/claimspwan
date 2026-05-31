@@ -447,7 +447,7 @@ const CONSOLE_SALES = [
     original_price: "$59.99",
     sale_price: "$29.99",
     discount: "50% OFF",
-    image_url: "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?q=80&w=800&auto=format&fit=crop",
+    image_url: "https://cdn.akamai.steamstatic.com/steam/apps/1551360/header.jpg",
     claim_url: "https://www.xbox.com/en-US/games/store/forza-horizon-5/9nkx70bbcdgs",
     upvotes: 684,
     rating: 4.8
@@ -459,7 +459,7 @@ const CONSOLE_SALES = [
     original_price: "$59.99",
     sale_price: "$19.99",
     discount: "67% OFF",
-    image_url: "https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=800&auto=format&fit=crop",
+    image_url: "https://cdn.akamai.steamstatic.com/steam/apps/1240440/header.jpg",
     claim_url: "https://www.xbox.com/en-US/games/store/halo-infinite-campaign/9np1p1wfs0lb",
     upvotes: 420,
     rating: 4.3
@@ -471,7 +471,7 @@ const CONSOLE_SALES = [
     original_price: "$59.99",
     sale_price: "$39.99",
     discount: "33% OFF",
-    image_url: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?q=80&w=800&auto=format&fit=crop",
+    image_url: "https://cdn.akamai.steamstatic.com/steam/apps/1245620/header.jpg",
     claim_url: "https://www.xbox.com/en-US/games/store/elden-ring/9p3j32ctxlrx",
     upvotes: 954,
     rating: 4.9
@@ -483,7 +483,7 @@ const CONSOLE_SALES = [
     original_price: "$59.99",
     sale_price: "$29.99",
     discount: "50% OFF",
-    image_url: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=800&auto=format&fit=crop",
+    image_url: "https://cdn.akamai.steamstatic.com/steam/apps/1091500/header.jpg",
     claim_url: "https://www.xbox.com/en-US/games/store/cyberpunk-2077/9nkx70bbcdgs",
     upvotes: 512,
     rating: 4.2
@@ -495,7 +495,7 @@ const CONSOLE_SALES = [
     original_price: "$69.99",
     sale_price: "$49.99",
     discount: "28% OFF",
-    image_url: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=800&auto=format&fit=crop",
+    image_url: "https://image.api.playstation.com/vulcan/ap/rnd/202306/1219/1c7b75d8ed9271516546560d219ad0b22ee0a263b4537bd8.png",
     claim_url: "https://store.playstation.com/en-us/concept/10002456",
     upvotes: 892,
     rating: 4.9
@@ -507,7 +507,7 @@ const CONSOLE_SALES = [
     original_price: "$69.99",
     sale_price: "$39.99",
     discount: "43% OFF",
-    image_url: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=800&auto=format&fit=crop",
+    image_url: "https://image.api.playstation.com/vulcan/ap/rnd/202503/2016/b69c06fb108299866057126b0d3a0530bdf96a39d2ce1cb9.png",
     claim_url: "https://store.playstation.com/en-us/concept/10001850",
     upvotes: 754,
     rating: 4.8
@@ -519,7 +519,7 @@ const CONSOLE_SALES = [
     original_price: "$69.99",
     sale_price: "$34.99",
     discount: "50% OFF",
-    image_url: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=800&auto=format&fit=crop",
+    image_url: "https://image.api.playstation.com/vulcan/ap/rnd/202206/0720/eEczyEMDd2BLa3dtkGJVE9Id.png",
     claim_url: "https://store.playstation.com/en-us/concept/10002694",
     upvotes: 620,
     rating: 4.7
@@ -531,7 +531,7 @@ const CONSOLE_SALES = [
     original_price: "$69.99",
     sale_price: "$29.99",
     discount: "57% OFF",
-    image_url: "https://images.unsplash.com/photo-1516116211223-5c359a36298a?q=80&w=800&auto=format&fit=crop",
+    image_url: "https://image.api.playstation.com/vulcan/ap/rnd/202210/0315/asGInU6zOf8SvsD4bxbXGdqU.png",
     claim_url: "https://store.playstation.com/en-us/concept/10001224",
     upvotes: 412,
     rating: 4.6

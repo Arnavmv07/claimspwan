@@ -82,7 +82,7 @@ export default function GameCard({ game, onGameSelect, onClaimClick }) {
       </span>
 
       {/* Card Cover Art */}
-      <div className="h-44 w-full rounded-xl overflow-hidden relative mb-3 bg-dark-bg select-none">
+      <div className="aspect-[460/215] w-full rounded-xl overflow-hidden relative mb-3 bg-dark-bg select-none">
         <div className="absolute inset-0 bg-gradient-to-t from-[#121A2A] via-transparent to-transparent z-10"></div>
         <img 
           src={game.image_url} 
