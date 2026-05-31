@@ -584,7 +584,7 @@ async function getSales() {
             sale_price: salePrice,
             discount: discount || `${Math.round(parseFloat(deal.savings))}% OFF`,
             image_url: imageUrl,
-            claim_url: `https://store.steampowered.com/app/${deal.steamAppID}`,
+            claim_url: `https://www.cheapshark.com/redirect?dealID=${deal.dealID}`,
             upvotes: Math.round(parseFloat(deal.dealRating) * 50) + 120,
             rating: parseFloat((parseFloat(deal.steamRatingPercent) / 20).toFixed(1)) || 4.2
           };

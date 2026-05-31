@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Percent, ArrowRight, ExternalLink, ThumbsUp, Search } from 'lucide-react';
-import { convertPrice } from '../utils/currency';
+import { convertPrice, rewriteRegionalUrl } from '../utils/currency';
 
 export default function SaleView({ sales, loading, error, onAdClick, onAdImpression, currency }) {
   const [activeSubTab, setActiveSubTab] = useState('PC'); // 'PC' | 'Xbox' | 'PS5'
@@ -14,7 +14,8 @@ export default function SaleView({ sales, loading, error, onAdClick, onAdImpress
     if (onAdClick) {
       onAdClick('in-feed');
     }
-    window.open(deal.claim_url, '_blank', 'noopener,noreferrer');
+    const targetUrl = rewriteRegionalUrl(deal.claim_url, currency);
+    window.open(targetUrl, '_blank', 'noopener,noreferrer');
   };
 
   // Helper to parse price string like "$19.99" to float 19.99

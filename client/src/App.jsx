@@ -8,7 +8,7 @@ import Vignette from './components/Vignette';
 import PublisherHUD from './components/PublisherHUD';
 import AdSlot from './components/AdSlot';
 import SaleView from './components/SaleView';
-import { CURRENCIES, convertPrice } from './utils/currency';
+import { CURRENCIES, convertPrice, detectLocalCurrency } from './utils/currency';
 
 const AD_CPM_RATES = {
   'leaderboard': 2.50,
@@ -29,7 +29,7 @@ export default function App() {
   const [salesError, setSalesError] = useState(null);
 
   // Currency State
-  const [currency, setCurrency] = useState('USD');
+  const [currency, setCurrency] = useState(() => detectLocalCurrency());
 
   // Filters and Routing States
   const [activeTab, setActiveTab] = useState('Active'); // 'Active' | 'Upcoming' | 'Expired' | 'Sale'

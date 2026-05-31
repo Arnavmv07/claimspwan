@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { ShieldCheck, Flame, Loader2, Sparkles, X } from 'lucide-react';
 import AdSlot from './AdSlot';
+import { rewriteRegionalUrl } from '../utils/currency';
 
 export default function Vignette({ 
   game, 
   onClose, 
   onAdClick, 
-  onAdImpression 
+  onAdImpression,
+  currency
 }) {
   const [secondsLeft, setSecondsLeft] = useState(5);
   const [redirectReady, setRedirectReady] = useState(false);
@@ -45,10 +47,11 @@ export default function Vignette({
       finalUrl = `${finalUrl}${separator}pp=claimspwan-affiliate-id`;
     }
 
-    console.log(`Triggering external claim redirect to: ${finalUrl}`);
+    const localizedUrl = rewriteRegionalUrl(finalUrl, currency);
+    console.log(`Triggering external claim redirect to: ${localizedUrl}`);
     
     // Open in a new tab
-    window.open(finalUrl, '_blank', 'noopener,noreferrer');
+    window.open(localizedUrl, '_blank', 'noopener,noreferrer');
     
     // Close the vignette and return user to site dashboard
     setTimeout(() => {
