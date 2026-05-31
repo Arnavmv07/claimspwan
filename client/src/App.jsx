@@ -45,17 +45,17 @@ export default function App() {
     earnings: 0.0
   });
 
-  // Fetch games database from backend on mount
+  // Fetch games database from backend on mount or when currency changes
   useEffect(() => {
     fetchGames();
-  }, []);
+  }, [currency]);
 
-  // Fetch sales database when Sale tab becomes active
+  // Fetch sales database when Sale tab becomes active or when currency changes
   useEffect(() => {
     if (activeTab === 'Sale') {
       fetchSales();
     }
-  }, [activeTab]);
+  }, [activeTab, currency]);
 
   // Hash-based Deep Routing parser (Landing Pages)
   useEffect(() => {
@@ -85,7 +85,7 @@ export default function App() {
 
   const fetchGames = () => {
     setLoading(true);
-    fetch('/api/games')
+    fetch(`/api/games?currency=${currency}`)
       .then(res => {
         if (!res.ok) throw new Error('Failed to retrieve free games database');
         return res.json();
@@ -104,7 +104,7 @@ export default function App() {
   const fetchSales = () => {
     setSalesLoading(true);
     setSalesError(null);
-    fetch('/api/sales')
+    fetch(`/api/sales?currency=${currency}`)
       .then(res => {
         if (!res.ok) throw new Error('Failed to retrieve sales database');
         return res.json();

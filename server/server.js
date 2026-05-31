@@ -21,7 +21,8 @@ app.use((req, res, next) => {
 // Get all games
 app.get('/api/games', async (req, res) => {
   try {
-    const games = await db.getGames();
+    const { currency } = req.query;
+    const games = await db.getGames(currency);
     res.json(games);
   } catch (error) {
     console.error('API Error /games:', error);
@@ -32,7 +33,8 @@ app.get('/api/games', async (req, res) => {
 // Get all sales (PC, Xbox, PS5)
 app.get('/api/sales', async (req, res) => {
   try {
-    const sales = await db.getSales();
+    const { currency } = req.query;
+    const sales = await db.getSales(currency);
     res.json(sales);
   } catch (error) {
     console.error('API Error /sales:', error);

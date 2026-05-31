@@ -85,14 +85,29 @@ function getFallbackImage(title, platform) {
 let steamCache = {};
 const STEAM_CACHE_EXPIRY = 2 * 60 * 60 * 1000; // 2 hours
 
-async function fetchSteamDetails(steamAppID) {
+function getSteamCountryCode(currency) {
+  const ccMapping = {
+    USD: 'us',
+    EUR: 'de', // Germany (largest Eurozone market)
+    GBP: 'gb',
+    INR: 'in',
+    CAD: 'ca',
+    AUD: 'au',
+    JPY: 'jp',
+    CNY: 'cn'
+  };
+  return ccMapping[currency] || 'us';
+}
+
+async function fetchSteamDetails(steamAppID, cc = 'us') {
   const now = Date.now();
-  if (steamCache[steamAppID] && (now - steamCache[steamAppID].timestamp < STEAM_CACHE_EXPIRY)) {
-    return steamCache[steamAppID];
+  const cacheKey = `${steamAppID}_${cc}`;
+  if (steamCache[cacheKey] && (now - steamCache[cacheKey].timestamp < STEAM_CACHE_EXPIRY)) {
+    return steamCache[cacheKey];
   }
 
   try {
-    const url = `https://store.steampowered.com/api/appdetails?appids=${steamAppID}&cc=us&l=en`;
+    const url = `https://store.steampowered.com/api/appdetails?appids=${steamAppID}&cc=${cc}&l=en`;
     const res = await fetch(url);
     if (res.ok) {
       const data = await res.json();
@@ -123,7 +138,7 @@ async function fetchSteamDetails(steamAppID) {
           timestamp: now
         };
 
-        steamCache[steamAppID] = details;
+        steamCache[cacheKey] = details;
         return details;
       }
     }
@@ -277,7 +292,7 @@ function saveGames(games) {
   }
 }
 
-async function getGames() {
+async function getGames(currency = 'USD') {
   const now = Date.now();
   
   if (memoryCache.data && memoryCache.expiry > now) {
@@ -433,10 +448,7 @@ async function addRating(id, userRating) {
   return null;
 }
 
-let salesCache = {
-  data: null,
-  expiry: 0
-};
+let salesCache = {}; // Cache isolated by currency key
 const SALES_CACHE_DURATION = 15 * 60 * 1000;
 
 const CONSOLE_SALES = [
@@ -533,10 +545,10 @@ const CONSOLE_SALES = [
   }
 ];
 
-async function getSales() {
+async function getSales(currency = 'USD') {
   const now = Date.now();
-  if (salesCache.data && salesCache.expiry > now) {
-    return salesCache.data;
+  if (salesCache[currency] && salesCache[currency].expiry > now) {
+    return salesCache[currency].data;
   }
 
   let pcSales = [];
@@ -554,10 +566,17 @@ async function getSales() {
           let imageUrl = `https://cdn.akamai.steamstatic.com/steam/apps/${deal.steamAppID}/header.jpg`;
 
           if (deal.steamAppID) {
-            const steamDetails = await fetchSteamDetails(deal.steamAppID);
+            const cc = getSteamCountryCode(currency);
+            const steamDetails = await fetchSteamDetails(deal.steamAppID, cc);
             if (steamDetails) {
-              // Retrieve only high-res box art, keeping CheapShark prices 100% accurate/live
               if (steamDetails.image_url) imageUrl = steamDetails.image_url;
+              
+              // Dynamic Regional pricing override directly from official Steam storefront database!
+              if (cc !== 'us') {
+                if (steamDetails.original_price) originalPrice = steamDetails.original_price;
+                if (steamDetails.sale_price) salePrice = steamDetails.sale_price;
+                if (steamDetails.discount) discount = steamDetails.discount;
+              }
             }
           }
 
@@ -567,7 +586,7 @@ async function getSales() {
             platform: 'PC',
             original_price: originalPrice,
             sale_price: salePrice,
-            discount: discount || `${Math.round(parseFloat(deal.savings))}% OFF`,
+            discount: discount,
             image_url: imageUrl,
             claim_url: `https://www.cheapshark.com/redirect?dealID=${deal.dealID}`,
             upvotes: Math.round(parseFloat(deal.dealRating) * 50) + 120,
@@ -587,8 +606,29 @@ async function getSales() {
     let salePrice = deal.sale_price;
     let discount = deal.discount;
 
-    // Completely skip calling Steam Details API for all console sales (Xbox & PS5)
-    // to preserve 100% correct storefront selling ("Buy") prices.
+    const cc = getSteamCountryCode(currency);
+    if (deal.steamAppID && cc !== 'us') {
+      const steamDetails = await fetchSteamDetails(deal.steamAppID, cc);
+      if (steamDetails) {
+        if (steamDetails.original_price) originalPrice = steamDetails.original_price;
+        if (steamDetails.sale_price) {
+          // Calculate the sale price by applying the console deal's discount percentage to the Steam regional MSRP
+          const originalPriceNum = parseFloat(originalPrice.replace(/[^0-9.]/g, '')) || 0;
+          const discountPercent = parseFloat(deal.discount) / 100;
+          if (originalPriceNum > 0 && discountPercent > 0) {
+            const calculatedSale = originalPriceNum * (1 - discountPercent);
+            const currencySymbol = {
+              EUR: '€', GBP: '£', INR: '₹', CAD: 'C$', AUD: 'A$', JPY: '¥', CNY: '¥'
+            }[currency] || '$';
+            const decimals = (currency === 'JPY' || currency === 'INR' || currency === 'CNY') ? 0 : 2;
+            salePrice = `${currencySymbol}${calculatedSale.toFixed(decimals)}`;
+          } else {
+            salePrice = steamDetails.sale_price;
+          }
+        }
+      }
+    }
+
     return {
       ...deal,
       original_price: originalPrice,
@@ -600,8 +640,10 @@ async function getSales() {
   const resolvedConsoleSales = await Promise.all(detailedConsolePromises);
 
   const mergedSales = [...pcSales, ...resolvedConsoleSales];
-  salesCache.data = mergedSales;
-  salesCache.expiry = now + SALES_CACHE_DURATION;
+  salesCache[currency] = {
+    data: mergedSales,
+    expiry: now + SALES_CACHE_DURATION
+  };
   return mergedSales;
 }
 

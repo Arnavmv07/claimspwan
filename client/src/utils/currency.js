@@ -109,6 +109,11 @@ export function convertPrice(priceStr, currencyKey) {
   if (trimmed.toLowerCase() === 'free' || trimmed === '$0.00' || trimmed === '0.00' || trimmed.toLowerCase().includes('free')) {
     return 'FREE';
   }
+
+  // If the price string does not contain '$' and contains other non-USD symbols, it is already converted!
+  if (!trimmed.includes('$') && trimmed.match(/[^0-9.\s]/)) {
+    return trimmed;
+  }
   
   // Extract numeric value
   const match = trimmed.match(/[0-9.]+/);
