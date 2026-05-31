@@ -21,6 +21,119 @@ const GAME_IMAGES = {
   controller: 'https://images.unsplash.com/photo-1593305841991-05c297ba4575?q=80&w=800&auto=format&fit=crop'
 };
 
+// Topic-Matched Fallback Image Engine
+function getFallbackImage(title, platform) {
+  const t = (title || '').toLowerCase();
+  
+  if (t.includes('star wars') || t.includes('jedi') || t.includes('skywalker') || t.includes('galaxy')) {
+    return GAME_IMAGES.starwars;
+  }
+  if (t.includes('gta') || t.includes('grand theft') || t.includes('thief') || t.includes('mafia') || t.includes('crime') || t.includes('gang')) {
+    return GAME_IMAGES.gta;
+  }
+  if (t.includes('witcher') || t.includes('scrolls') || t.includes('fantasy') || t.includes('sword') || t.includes('rpg') || t.includes('mage') || t.includes('elder') || t.includes('dragon')) {
+    return GAME_IMAGES.witcher;
+  }
+  if (t.includes('horizon') || t.includes('forza') || t.includes('car') || t.includes('race') || t.includes('rally') || t.includes('speed') || t.includes('dirt') || t.includes('track') || t.includes('auto')) {
+    return GAME_IMAGES.horizon;
+  }
+  if (t.includes('fallout') || t.includes('apocalypse') || t.includes('survival') || t.includes('post') || t.includes('dead') || t.includes('wasteland') || t.includes('zombie')) {
+    return GAME_IMAGES.fallout;
+  }
+  if (t.includes('civilization') || t.includes('strategy') || t.includes('empire') || t.includes('command') || t.includes('conquer') || t.includes('starcraft') || t.includes('warcraft') || t.includes('total war') || t.includes('tactics')) {
+    return GAME_IMAGES.starcraft;
+  }
+  if (t.includes('tomb') || t.includes('raider') || t.includes('lara') || t.includes('adventure') || t.includes('expedition') || t.includes('ruin') || t.includes('quest')) {
+    return GAME_IMAGES.tombraider;
+  }
+  if (t.includes('bioshock') || t.includes('shock') || t.includes('underwater') || t.includes('rapture') || t.includes('infinite')) {
+    return GAME_IMAGES.bioshock;
+  }
+  if (t.includes('celeste') || t.includes('indie') || t.includes('pixel') || t.includes('platformer') || t.includes('jump') || t.includes('retro') || t.includes('arcade')) {
+    return GAME_IMAGES.celeste;
+  }
+  if (t.includes('gears') || t.includes('shooter') || t.includes('halo') || t.includes('doom') || t.includes('cod') || t.includes('warfare') || t.includes('strike') || t.includes('gun')) {
+    return GAME_IMAGES.gears;
+  }
+  if (t.includes('mass effect') || t.includes('sci-fi') || t.includes('alien') || t.includes('star') || t.includes('planet') || t.includes('ship')) {
+    return GAME_IMAGES.masseffect;
+  }
+  
+  // Use platform or a fallback
+  if ((platform || '').toLowerCase().includes('epic')) {
+    return GAME_IMAGES.controller;
+  }
+  
+  // Standard high-quality defaults based on dynamic hash of title
+  const fallbacks = [
+    GAME_IMAGES.indie,
+    GAME_IMAGES.controller,
+    GAME_IMAGES.witcher,
+    GAME_IMAGES.horizon,
+    GAME_IMAGES.starwars
+  ];
+  
+  let hash = 0;
+  for (let i = 0; i < t.length; i++) {
+    hash = t.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const index = Math.abs(hash) % fallbacks.length;
+  return fallbacks[index];
+}
+
+// Local cache for Steam prices and images
+let steamCache = {};
+const STEAM_CACHE_EXPIRY = 2 * 60 * 60 * 1000; // 2 hours
+
+async function fetchSteamDetails(steamAppID) {
+  const now = Date.now();
+  if (steamCache[steamAppID] && (now - steamCache[steamAppID].timestamp < STEAM_CACHE_EXPIRY)) {
+    return steamCache[steamAppID];
+  }
+
+  try {
+    const url = `https://store.steampowered.com/api/appdetails?appids=${steamAppID}&cc=us&l=en`;
+    const res = await fetch(url);
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data[steamAppID] && data[steamAppID].success) {
+        const gameData = data[steamAppID].data;
+        let originalPrice = null;
+        let salePrice = null;
+        let discount = null;
+
+        if (gameData.is_free) {
+          originalPrice = "$0.00";
+          salePrice = "$0.00";
+          discount = "100% OFF";
+        } else if (gameData.price_overview) {
+          originalPrice = gameData.price_overview.initial_formatted || `$${(gameData.price_overview.initial / 100).toFixed(2)}`;
+          salePrice = gameData.price_overview.final_formatted || `$${(gameData.price_overview.final / 100).toFixed(2)}`;
+          discount = gameData.price_overview.discount_percent > 0 ? `${gameData.price_overview.discount_percent}% OFF` : null;
+        }
+
+        // Use Akamai CDN for Steam header image (reliable and gorgeous resolution)
+        const imageUrl = gameData.header_image || `https://cdn.akamai.steamstatic.com/steam/apps/${steamAppID}/header.jpg`;
+
+        const details = {
+          original_price: originalPrice,
+          sale_price: salePrice,
+          discount: discount,
+          image_url: imageUrl,
+          timestamp: now
+        };
+
+        steamCache[steamAppID] = details;
+        return details;
+      }
+    }
+  } catch (error) {
+    console.error(`[Steam API] Error fetching details for app ${steamAppID}:`, error);
+  }
+
+  return null;
+}
+
 const SEED_DATA = [
   {
     id: 'steam-civilization-vi',
@@ -222,7 +335,13 @@ async function getGames() {
             platform: platformMapped,
             original_price: worth,
             discount: "100% OFF",
-            image_url: gp.image || gp.thumbnail,
+            image_url: (() => {
+              const img = gp.image || gp.thumbnail || '';
+              if (!img || img.trim() === '' || img.toLowerCase().includes('placeholder') || img.toLowerCase().includes('no-image') || img === 'N/A') {
+                return getFallbackImage(gp.title, platformMapped);
+              }
+              return img;
+            })(),
             status: "Active",
             claim_url: gp.open_giveaway_url,
             epic_creator_tag: platformMapped === 'Epic Games Store' ? 'lootquest-20' : '',
@@ -432,20 +551,38 @@ async function getSales() {
     if (response.ok) {
       const deals = await response.json();
       if (Array.isArray(deals)) {
-        pcSales = deals.map(deal => {
+        const detailedSalesPromises = deals.map(async (deal) => {
+          let originalPrice = `$${deal.normalPrice}`;
+          let salePrice = `$${deal.salePrice}`;
+          let discount = `${Math.round(parseFloat(deal.savings))}% OFF`;
+          // Akamai CDN is highly reliable and provides high-res Steam header pictures
+          let imageUrl = `https://cdn.akamai.steamstatic.com/steam/apps/${deal.steamAppID}/header.jpg`;
+
+          if (deal.steamAppID) {
+            const steamDetails = await fetchSteamDetails(deal.steamAppID);
+            if (steamDetails) {
+              if (steamDetails.original_price) originalPrice = steamDetails.original_price;
+              if (steamDetails.sale_price) salePrice = steamDetails.sale_price;
+              if (steamDetails.discount) discount = steamDetails.discount;
+              if (steamDetails.image_url) imageUrl = steamDetails.image_url;
+            }
+          }
+
           return {
             id: `pc-${deal.dealID}`,
             title: deal.title,
             platform: 'PC',
-            original_price: `$${deal.normalPrice}`,
-            sale_price: `$${deal.salePrice}`,
-            discount: `${Math.round(parseFloat(deal.savings))}% OFF`,
-            image_url: deal.thumb || 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=800',
+            original_price: originalPrice,
+            sale_price: salePrice,
+            discount: discount || `${Math.round(parseFloat(deal.savings))}% OFF`,
+            image_url: imageUrl,
             claim_url: `https://store.steampowered.com/app/${deal.steamAppID}`,
             upvotes: Math.round(parseFloat(deal.dealRating) * 50) + 120,
             rating: parseFloat((parseFloat(deal.steamRatingPercent) / 20).toFixed(1)) || 4.2
           };
         });
+
+        pcSales = await Promise.all(detailedSalesPromises);
       }
     }
   } catch (error) {

@@ -40,11 +40,24 @@ export default function Header({
             }`}
           >
             <Flame class="w-4 h-4" />
-            Active Deals
+            Free Games
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
             </span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('Sale')}
+            className={`flex items-center gap-2 px-5 py-2 text-xs font-black uppercase tracking-wider rounded-lg transition-all duration-300 ${
+              activeTab === 'Sale'
+                ? 'bg-gradient-to-r from-blue-600 to-accent-glow text-white shadow-glow-cyan'
+                : 'text-gray-400 hover:text-white hover:bg-dark-bg/40'
+            }`}
+          >
+            <Percent class="w-4 h-4" />
+            Sale
+            <span className="w-1.5 h-1.5 rounded-full bg-accent-neon animate-pulse"></span>
           </button>
           
           <button
@@ -70,19 +83,6 @@ export default function Header({
           >
             <History class="w-4 h-4" />
             Expired
-          </button>
-
-          <button
-            onClick={() => setActiveTab('Sale')}
-            className={`flex items-center gap-2 px-5 py-2 text-xs font-black uppercase tracking-wider rounded-lg transition-all duration-300 ${
-              activeTab === 'Sale'
-                ? 'bg-gradient-to-r from-blue-600 to-accent-glow text-white shadow-glow-cyan'
-                : 'text-gray-400 hover:text-white hover:bg-dark-bg/40'
-            }`}
-          >
-            <Percent class="w-4 h-4" />
-            Sale
-            <span className="w-1.5 h-1.5 rounded-full bg-accent-neon animate-pulse"></span>
           </button>
         </nav>
 
@@ -112,7 +112,16 @@ export default function Header({
           }`}
         >
           <Flame class="w-4 h-4" />
-          Active
+          Free Games
+        </button>
+        <button
+          onClick={() => setActiveTab('Sale')}
+          className={`flex flex-col items-center gap-1 text-[10px] font-black uppercase tracking-widest ${
+            activeTab === 'Sale' ? 'text-accent-neon' : 'text-gray-400'
+          }`}
+        >
+          <Percent class="w-4 h-4" />
+          Sale
         </button>
         <button
           onClick={() => setActiveTab('Upcoming')}
@@ -131,15 +140,6 @@ export default function Header({
         >
           <History class="w-4 h-4" />
           Expired
-        </button>
-        <button
-          onClick={() => setActiveTab('Sale')}
-          className={`flex flex-col items-center gap-1 text-[10px] font-black uppercase tracking-widest ${
-            activeTab === 'Sale' ? 'text-accent-neon' : 'text-gray-400'
-          }`}
-        >
-          <Percent class="w-4 h-4" />
-          Sale
         </button>
       </div>
     </header>
