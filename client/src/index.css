@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #0B0F19;
+    color: #F3F4F6;
+    font-family: 'Outfit', 'Inter', sans-serif;
+  }
+
+  /* Custom high-end neon scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #0B0F19;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #24324D;
+    border-radius: 9999px;
+    border: 2px solid #0B0F19;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #00F2FE;
+  }
+}
+
+/* Premium utilities for glassmorphism */
+.glass {
+  background: rgba(22, 31, 50, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-nav {
+  background: rgba(11, 15, 25, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Pulsing neon glows */
+.neon-glow-cyan {
+  box-shadow: 0 0 15px rgba(0, 242, 254, 0.35);
+  border-color: rgba(0, 242, 254, 0.6);
+}
+
+.neon-glow-purple {
+  box-shadow: 0 0 15px rgba(182, 36, 255, 0.35);
+  border-color: rgba(182, 36, 255, 0.6);
+}
+
+/* Micro-interaction scale on click */
+.btn-click-active:active {
+  transform: scale(0.96);
+}
+
+/* Vignette full overlay spinner */
+@keyframes spin-slow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
+}
+
+/* Ad placeholder pattern */
+.bg-ad-pattern {
+  background-color: #121926;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 0),
+                    radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 0);
+  background-size: 16px 16px;
+  background-position: 0 0, 8px 8px;
+}
