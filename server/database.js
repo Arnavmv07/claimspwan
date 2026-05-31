@@ -314,9 +314,154 @@ async function addRating(id, userRating) {
   return null;
 }
 
+let salesCache = {
+  data: null,
+  expiry: 0
+};
+const SALES_CACHE_DURATION = 15 * 60 * 1000;
+
+const CONSOLE_SALES = [
+  {
+    id: 'xbox-forza-horizon-5',
+    title: "Forza Horizon 5",
+    platform: "Xbox",
+    original_price: "$59.99",
+    sale_price: "$29.99",
+    discount: "50% OFF",
+    image_url: "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?q=80&w=800&auto=format&fit=crop",
+    claim_url: "https://www.xbox.com/en-US/games/store/forza-horizon-5/9nkx70bbcdgs",
+    upvotes: 684,
+    rating: 4.8
+  },
+  {
+    id: 'xbox-halo-infinite',
+    title: "Halo Infinite (Campaign)",
+    platform: "Xbox",
+    original_price: "$59.99",
+    sale_price: "$19.99",
+    discount: "67% OFF",
+    image_url: "https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=800&auto=format&fit=crop",
+    claim_url: "https://www.xbox.com/en-US/games/store/halo-infinite-campaign/9np1p1wfs0lb",
+    upvotes: 420,
+    rating: 4.3
+  },
+  {
+    id: 'xbox-elden-ring',
+    title: "Elden Ring",
+    platform: "Xbox",
+    original_price: "$59.99",
+    sale_price: "$39.99",
+    discount: "33% OFF",
+    image_url: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?q=80&w=800&auto=format&fit=crop",
+    claim_url: "https://www.xbox.com/en-US/games/store/elden-ring/9p3j32ctxlrx",
+    upvotes: 954,
+    rating: 4.9
+  },
+  {
+    id: 'xbox-cyberpunk-2077',
+    title: "Cyberpunk 2077",
+    platform: "Xbox",
+    original_price: "$59.99",
+    sale_price: "$29.99",
+    discount: "50% OFF",
+    image_url: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=800&auto=format&fit=crop",
+    claim_url: "https://www.xbox.com/en-US/games/store/cyberpunk-2077/9nkx70bbcdgs",
+    upvotes: 512,
+    rating: 4.2
+  },
+  {
+    id: 'ps5-spiderman-2',
+    title: "Marvel's Spider-Man 2",
+    platform: "PS5",
+    original_price: "$69.99",
+    sale_price: "$49.99",
+    discount: "28% OFF",
+    image_url: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=800&auto=format&fit=crop",
+    claim_url: "https://store.playstation.com/en-us/concept/10002456",
+    upvotes: 892,
+    rating: 4.9
+  },
+  {
+    id: 'ps5-god-of-war-ragnarok',
+    title: "God of War Ragnarök",
+    platform: "PS5",
+    original_price: "$69.99",
+    sale_price: "$39.99",
+    discount: "43% OFF",
+    image_url: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=800&auto=format&fit=crop",
+    claim_url: "https://store.playstation.com/en-us/concept/10001850",
+    upvotes: 754,
+    rating: 4.8
+  },
+  {
+    id: 'ps5-last-of-us-part-1',
+    title: "The Last of Us Part I",
+    platform: "PS5",
+    original_price: "$69.99",
+    sale_price: "$34.99",
+    discount: "50% OFF",
+    image_url: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=800&auto=format&fit=crop",
+    claim_url: "https://store.playstation.com/en-us/concept/10002694",
+    upvotes: 620,
+    rating: 4.7
+  },
+  {
+    id: 'ps5-demons-souls',
+    title: "Demon's Souls",
+    platform: "PS5",
+    original_price: "$69.99",
+    sale_price: "$29.99",
+    discount: "57% OFF",
+    image_url: "https://images.unsplash.com/photo-1516116211223-5c359a36298a?q=80&w=800&auto=format&fit=crop",
+    claim_url: "https://store.playstation.com/en-us/concept/10001224",
+    upvotes: 412,
+    rating: 4.6
+  }
+];
+
+async function getSales() {
+  const now = Date.now();
+  if (salesCache.data && salesCache.expiry > now) {
+    return salesCache.data;
+  }
+
+  let pcSales = [];
+  try {
+    console.log('[API] Fetching real-time Steam PC sales from CheapShark...');
+    const response = await fetch('https://www.cheapshark.com/api/1.0/deals?storeID=1&upperLimit=30');
+    if (response.ok) {
+      const deals = await response.json();
+      if (Array.isArray(deals)) {
+        pcSales = deals.map(deal => {
+          return {
+            id: `pc-${deal.dealID}`,
+            title: deal.title,
+            platform: 'PC',
+            original_price: `$${deal.normalPrice}`,
+            sale_price: `$${deal.salePrice}`,
+            discount: `${Math.round(parseFloat(deal.savings))}% OFF`,
+            image_url: deal.thumb || 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=800',
+            claim_url: `https://store.steampowered.com/app/${deal.steamAppID}`,
+            upvotes: Math.round(parseFloat(deal.dealRating) * 50) + 120,
+            rating: parseFloat((parseFloat(deal.steamRatingPercent) / 20).toFixed(1)) || 4.2
+          };
+        });
+      }
+    }
+  } catch (error) {
+    console.error('Error fetching CheapShark PC deals:', error);
+  }
+
+  const mergedSales = [...pcSales, ...CONSOLE_SALES];
+  salesCache.data = mergedSales;
+  salesCache.expiry = now + SALES_CACHE_DURATION;
+  return mergedSales;
+}
+
 module.exports = {
   getGames,
   getGameById,
   incrementUpvotes,
-  addRating
+  addRating,
+  getSales
 };

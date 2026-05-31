@@ -29,6 +29,17 @@ app.get('/api/games', async (req, res) => {
   }
 });
 
+// Get all sales (PC, Xbox, PS5)
+app.get('/api/sales', async (req, res) => {
+  try {
+    const sales = await db.getSales();
+    res.json(sales);
+  } catch (error) {
+    console.error('API Error /sales:', error);
+    res.status(500).json({ error: 'Failed to retrieve sales database' });
+  }
+});
+
 // Get a single game detail
 app.get('/api/games/:id', async (req, res) => {
   try {

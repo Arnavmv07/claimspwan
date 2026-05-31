@@ -7,6 +7,7 @@ import GameDetail from './components/GameDetail';
 import Vignette from './components/Vignette';
 import PublisherHUD from './components/PublisherHUD';
 import AdSlot from './components/AdSlot';
+import SaleView from './components/SaleView';
 
 const AD_CPM_RATES = {
   'leaderboard': 2.50,
@@ -21,8 +22,13 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Sales States
+  const [sales, setSales] = useState([]);
+  const [salesLoading, setSalesLoading] = useState(true);
+  const [salesError, setSalesError] = useState(null);
+
   // Filters and Routing States
-  const [activeTab, setActiveTab] = useState('Active'); // 'Active' | 'Upcoming' | 'Expired'
+  const [activeTab, setActiveTab] = useState('Active'); // 'Active' | 'Upcoming' | 'Expired' | 'Sale'
   const [activePlatform, setActivePlatform] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGameId, setSelectedGameId] = useState(null); // String or null
@@ -39,6 +45,13 @@ export default function App() {
   useEffect(() => {
     fetchGames();
   }, []);
+
+  // Fetch sales database when Sale tab becomes active
+  useEffect(() => {
+    if (activeTab === 'Sale') {
+      fetchSales();
+    }
+  }, [activeTab]);
 
   // Hash-based Deep Routing parser (Landing Pages)
   useEffect(() => {
@@ -81,6 +94,25 @@ export default function App() {
         console.error(err);
         setError(err.message);
         setLoading(false);
+      });
+  };
+
+  const fetchSales = () => {
+    setSalesLoading(true);
+    setSalesError(null);
+    fetch('/api/sales')
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to retrieve sales database');
+        return res.json();
+      })
+      .then(data => {
+        setSales(data);
+        setSalesLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setSalesError(err.message);
+        setSalesLoading(false);
       });
   };
 
@@ -199,6 +231,15 @@ export default function App() {
             }} 
             onClaimClick={handleClaimClick}
             allGames={games}
+            onAdClick={handleAdClick}
+            onAdImpression={handleAdImpression}
+          />
+        ) : activeTab === 'Sale' ? (
+          /* Sale Dashboard Page */
+          <SaleView 
+            sales={sales}
+            loading={salesLoading}
+            error={salesError}
             onAdClick={handleAdClick}
             onAdImpression={handleAdImpression}
           />

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, Flame, Calendar, History, ShieldAlert, Award } from 'lucide-react';
+import { Search, Flame, Calendar, History, ShieldAlert, Award, Percent } from 'lucide-react';
 
 export default function Header({ 
   activeTab, 
@@ -71,6 +71,19 @@ export default function Header({
             <History class="w-4 h-4" />
             Expired
           </button>
+
+          <button
+            onClick={() => setActiveTab('Sale')}
+            className={`flex items-center gap-2 px-5 py-2 text-xs font-black uppercase tracking-wider rounded-lg transition-all duration-300 ${
+              activeTab === 'Sale'
+                ? 'bg-gradient-to-r from-blue-600 to-accent-glow text-white shadow-glow-cyan'
+                : 'text-gray-400 hover:text-white hover:bg-dark-bg/40'
+            }`}
+          >
+            <Percent class="w-4 h-4" />
+            Sale
+            <span className="w-1.5 h-1.5 rounded-full bg-accent-neon animate-pulse"></span>
+          </button>
         </nav>
 
         {/* Right: Search Input & Ad-Hub Status */}
@@ -118,6 +131,15 @@ export default function Header({
         >
           <History class="w-4 h-4" />
           Expired
+        </button>
+        <button
+          onClick={() => setActiveTab('Sale')}
+          className={`flex flex-col items-center gap-1 text-[10px] font-black uppercase tracking-widest ${
+            activeTab === 'Sale' ? 'text-accent-neon' : 'text-gray-400'
+          }`}
+        >
+          <Percent class="w-4 h-4" />
+          Sale
         </button>
       </div>
     </header>
