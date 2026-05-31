@@ -442,42 +442,29 @@ const SALES_CACHE_DURATION = 15 * 60 * 1000;
 const CONSOLE_SALES = [
   {
     id: 'xbox-forza-horizon-5',
-    title: "Forza Horizon 5",
+    title: "Forza Horizon 5 (Standard Edition)",
     platform: "Xbox",
     steamAppID: '1551360',
     original_price: "$59.99",
     sale_price: "$29.99",
     discount: "50% OFF",
     image_url: "https://cdn.akamai.steamstatic.com/steam/apps/1551360/header.jpg",
-    claim_url: "https://www.xbox.com/en-us/games/store/forza-horizon-5/9PMV0M206K2H",
+    claim_url: "https://www.xbox.com/en-us/games/store/forza-horizon-5-standard-edition/9nkx70bbcdrn",
     upvotes: 684,
     rating: 4.8
   },
   {
     id: 'xbox-halo-infinite',
-    title: "Halo Infinite (Campaign)",
+    title: "Halo Infinite",
     platform: "Xbox",
     steamAppID: '1240440',
     original_price: "$59.99",
-    sale_price: "$19.99",
-    discount: "67% OFF",
+    sale_price: "$29.99",
+    discount: "50% OFF",
     image_url: "https://cdn.akamai.steamstatic.com/steam/apps/1240440/header.jpg",
-    claim_url: "https://www.xbox.com/en-us/games/store/halo-infinite-campaign/9np1p1wfs0lb",
+    claim_url: "https://www.xbox.com/en-us/games/store/halo-infinite/9pp62z137j2z",
     upvotes: 420,
     rating: 4.3
-  },
-  {
-    id: 'xbox-elden-ring',
-    title: "Elden Ring",
-    platform: "Xbox",
-    steamAppID: '1245620',
-    original_price: "$59.99",
-    sale_price: "$39.99",
-    discount: "33% OFF",
-    image_url: "https://cdn.akamai.steamstatic.com/steam/apps/1245620/header.jpg",
-    claim_url: "https://www.xbox.com/en-us/games/store/elden-ring/9n1z039d0pxn",
-    upvotes: 954,
-    rating: 4.9
   },
   {
     id: 'xbox-cyberpunk-2077',
@@ -501,7 +488,7 @@ const CONSOLE_SALES = [
     sale_price: "$49.99",
     discount: "28% OFF",
     image_url: "https://image.api.playstation.com/vulcan/ap/rnd/202306/1219/1c7b75d8ed9271516546560d219ad0b22ee0a263b4537bd8.png",
-    claim_url: "https://store.playstation.com/en-us/concept/10002434",
+    claim_url: "https://store.playstation.com/en-us/concept/10003613",
     upvotes: 892,
     rating: 4.9
   },
@@ -560,8 +547,8 @@ async function getSales() {
       const deals = await response.json();
       if (Array.isArray(deals)) {
         const detailedSalesPromises = deals.map(async (deal) => {
-          let originalPrice = `$${deal.normalPrice}`;
-          let salePrice = `$${deal.salePrice}`;
+          let originalPrice = `$${parseFloat(deal.normalPrice).toFixed(2)}`;
+          let salePrice = `$${parseFloat(deal.salePrice).toFixed(2)}`;
           let discount = `${Math.round(parseFloat(deal.savings))}% OFF`;
           // Akamai CDN is highly reliable and provides high-res Steam header pictures
           let imageUrl = `https://cdn.akamai.steamstatic.com/steam/apps/${deal.steamAppID}/header.jpg`;
@@ -569,9 +556,7 @@ async function getSales() {
           if (deal.steamAppID) {
             const steamDetails = await fetchSteamDetails(deal.steamAppID);
             if (steamDetails) {
-              if (steamDetails.original_price) originalPrice = steamDetails.original_price;
-              if (steamDetails.sale_price) salePrice = steamDetails.sale_price;
-              if (steamDetails.discount) discount = steamDetails.discount;
+              // Retrieve only high-res box art, keeping CheapShark prices 100% accurate/live
               if (steamDetails.image_url) imageUrl = steamDetails.image_url;
             }
           }
@@ -602,19 +587,8 @@ async function getSales() {
     let salePrice = deal.sale_price;
     let discount = deal.discount;
 
-    if (deal.steamAppID && deal.platform !== 'PS5') {
-      const steamDetails = await fetchSteamDetails(deal.steamAppID);
-      if (steamDetails) {
-        if (steamDetails.original_price) originalPrice = steamDetails.original_price;
-        if (steamDetails.sale_price) salePrice = steamDetails.sale_price;
-        if (steamDetails.discount) {
-          discount = steamDetails.discount;
-        } else {
-          discount = "0% OFF";
-        }
-      }
-    }
-
+    // Completely skip calling Steam Details API for all console sales (Xbox & PS5)
+    // to preserve 100% correct storefront selling ("Buy") prices.
     return {
       ...deal,
       original_price: originalPrice,
