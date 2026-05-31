@@ -11,7 +11,21 @@ export const CURRENCIES = {
 
 export function detectLocalCurrency() {
   try {
-    // 1. Detect region based on preferred browser languages/locales
+    // 1. Prioritize Timezone detection (system clock/location - extremely reliable geographical indicator)
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+    const tzLower = tz.toLowerCase();
+    
+    if (tzLower.includes('europe/london') || tzLower.includes('europe/belfast')) return 'GBP';
+    if (tzLower.includes('asia/kolkata') || tzLower.includes('asia/calcutta')) return 'INR';
+    if (tzLower.includes('america/toronto') || tzLower.includes('america/vancouver') || tzLower.includes('america/edmonton') || tzLower.includes('america/winnipeg')) return 'CAD';
+    if (tzLower.includes('australia/') || tzLower.includes('pacific/auckland')) return 'AUD';
+    if (tzLower.includes('asia/tokyo')) return 'JPY';
+    if (tzLower.includes('asia/shanghai') || tzLower.includes('asia/urumqi') || tzLower.includes('asia/hong_kong') || tzLower.includes('asia/macao')) return 'CNY';
+    
+    const euroTimezones = ['europe/paris', 'europe/berlin', 'europe/rome', 'europe/madrid', 'europe/amsterdam', 'europe/brussels', 'europe/dublin', 'europe/vienna', 'europe/helsinki', 'europe/lisbon', 'europe/athens'];
+    if (euroTimezones.some(et => tzLower.includes(et))) return 'EUR';
+
+    // 2. Fallback to browser languages/locales (often defaults to en-US even for international users)
     const locale = navigator.language || (navigator.languages && navigator.languages[0]) || '';
     const l = locale.toLowerCase();
     
@@ -25,20 +39,6 @@ export function detectLocalCurrency() {
     // Eurozone countries
     const euroLocales = ['-de', '-fr', '-it', '-es', '-nl', '-be', '-ie', '-at', '-fi', '-pt', '-gr', '-sk', '-si', '-ee', '-lv', '-lt', '-cy', '-mt'];
     if (euroLocales.some(el => l.includes(el))) return 'EUR';
-    
-    // 2. Fallback to Timezone detection
-    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
-    const tzLower = tz.toLowerCase();
-    
-    if (tzLower.includes('europe/london') || tzLower.includes('europe/belfast')) return 'GBP';
-    if (tzLower.includes('asia/kolkata') || tzLower.includes('asia/calcutta')) return 'INR';
-    if (tzLower.includes('america/toronto') || tzLower.includes('america/vancouver') || tzLower.includes('america/edmonton') || tzLower.includes('america/winnipeg')) return 'CAD';
-    if (tzLower.includes('australia/') || tzLower.includes('pacific/auckland')) return 'AUD';
-    if (tzLower.includes('asia/tokyo')) return 'JPY';
-    if (tzLower.includes('asia/shanghai') || tzLower.includes('asia/urumqi') || tzLower.includes('asia/hong_kong') || tzLower.includes('asia/macao')) return 'CNY';
-    
-    const euroTimezones = ['europe/paris', 'europe/berlin', 'europe/rome', 'europe/madrid', 'europe/amsterdam', 'europe/brussels', 'europe/dublin', 'europe/vienna', 'europe/helsinki', 'europe/lisbon', 'europe/athens'];
-    if (euroTimezones.some(et => tzLower.includes(et))) return 'EUR';
     
   } catch (e) {
     console.error('[Currency Auto-Detect] Error detecting local currency:', e);
@@ -64,7 +64,7 @@ export function getStorefrontLocale(currencyKey) {
 export function rewriteRegionalUrl(url, currencyKey) {
   if (!url) return url;
   
-  // Rewrite Steam links (append country code parameter &cc=IN/GB/DE/US/etc.)
+  // 1. Rewrite Steam links (append country code parameter &cc=IN/GB/DE/US/etc.)
   if (url.includes('steampowered.com/') || url.includes('steamcommunity.com/')) {
     const steamCc = {
       USD: 'US',
@@ -84,6 +84,43 @@ export function rewriteRegionalUrl(url, currencyKey) {
     }
     const separator = cleanUrl.includes('?') ? '&' : '?';
     return `${cleanUrl}${separator}cc=${steamCc}`;
+  }
+
+  // 2. Rewrite PlayStation Store links (ensure localized concept/product URL)
+  if (url.includes('store.playstation.com')) {
+    const locale = getStorefrontLocale(currencyKey);
+    // Find conceptId or productId from the URL
+    const conceptMatch = url.match(/\/concept\/([0-9]+)/i);
+    if (conceptMatch) {
+      return `https://store.playstation.com/${locale}/concept/${conceptMatch[1]}`;
+    }
+    const productMatch = url.match(/\/product\/([A-Z0-9-]+)/i);
+    if (productMatch) {
+      return `https://store.playstation.com/${locale}/product/${productMatch[1]}`;
+    }
+    // Fallback: if it already has a locale, replace it
+    const localeRegex = /store\.playstation\.com\/[a-z]{2}-[a-z]{2}\//i;
+    if (localeRegex.test(url)) {
+      return url.replace(localeRegex, `store.playstation.com/${locale}/`);
+    }
+    return `https://store.playstation.com/${locale}/`;
+  }
+
+  // 3. Rewrite Xbox Store / Microsoft Store links
+  if (url.includes('xbox.com') || url.includes('microsoft.com')) {
+    const locale = getStorefrontLocale(currencyKey);
+    // Extract Product ID (12 alphanumeric characters, e.g. 9nkx70bbcdrn or bx3m8l83bbrw)
+    const prodIdMatch = url.match(/(?:productId\/|store\/)([a-z0-9]{12})/i);
+    if (prodIdMatch) {
+      return `https://www.xbox.com/${locale}/games/store/a/${prodIdMatch[1]}`;
+    }
+    // Fallback: replace locale in xbox.com URLs
+    if (url.includes('xbox.com')) {
+      const localeRegex = /xbox\.com\/[a-z]{2}-[a-z]{2}\//i;
+      if (localeRegex.test(url)) {
+        return url.replace(localeRegex, `xbox.com/${locale}/`);
+      }
+    }
   }
   
   return url;

@@ -41,10 +41,10 @@ export default function Vignette({
       finalUrl = `${finalUrl}${separator}tag=${game.epic_creator_tag}`;
     } else if (game.platform === 'Steam') {
       const separator = finalUrl.includes('?') ? '&' : '?';
-      finalUrl = `${finalUrl}${separator}utm_source=claimspwan&utm_medium=aggregator`;
+      finalUrl = `${finalUrl}${separator}utm_source=claimspawn&utm_medium=aggregator`;
     } else if (game.platform === 'GOG') {
       const separator = finalUrl.includes('?') ? '&' : '?';
-      finalUrl = `${finalUrl}${separator}pp=claimspwan-affiliate-id`;
+      finalUrl = `${finalUrl}${separator}pp=claimspawn-affiliate-id`;
     }
 
     const localizedUrl = rewriteRegionalUrl(finalUrl, currency);

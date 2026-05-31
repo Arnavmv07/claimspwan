@@ -77,12 +77,12 @@ const CONSOLE_REGIONAL_PRICES = {
 
 const CONSOLE_UNIVERSAL_URLS = {
   'xbox-forza-horizon-5': 'https://www.microsoft.com/store/productId/9nkx70bbcdrn',
-  'xbox-halo-infinite': 'https://www.microsoft.com/store/productId/9pp62z137j2z',
+  'xbox-halo-infinite': 'https://www.microsoft.com/store/productId/9pp627106m4v',
   'xbox-cyberpunk-2077': 'https://www.microsoft.com/store/productId/bx3m8l83bbrw',
-  'ps5-spiderman-2': 'https://store.playstation.com/concept/10003613',
-  'ps5-god-of-war-ragnarok': 'https://store.playstation.com/concept/10001901',
-  'ps5-last-of-us-part-1': 'https://store.playstation.com/concept/10003923',
-  'ps5-demons-souls': 'https://store.playstation.com/concept/10000282'
+  'ps5-spiderman-2': 'https://store.playstation.com/concept/10003732',
+  'ps5-god-of-war-ragnarok': 'https://store.playstation.com/concept/10001314',
+  'ps5-last-of-us-part-1': 'https://store.playstation.com/concept/10003554',
+  'ps5-demons-souls': 'https://store.playstation.com/concept/10000293'
 };
 
 export default function SaleView({ sales, loading, error, onAdClick, onAdImpression, currency }) {
@@ -93,8 +93,6 @@ export default function SaleView({ sales, loading, error, onAdClick, onAdImpress
 
   // Complete frontend sanitization / pricing override
   const sanitizedSales = sales.filter(item => item.id !== 'xbox-elden-ring').map((item) => {
-    let originalPrice = item.original_price;
-    let salePrice = item.sale_price;
     let claimUrl = item.claim_url;
 
     // Overwrite with universal direct short redirect links
@@ -102,18 +100,8 @@ export default function SaleView({ sales, loading, error, onAdClick, onAdImpress
       claimUrl = CONSOLE_UNIVERSAL_URLS[item.id];
     }
 
-    // Apply 100% accurate regional "Buy" prices dynamically
-    const activeCurrency = currency || 'USD';
-    const regionalPrice = CONSOLE_REGIONAL_PRICES[item.id]?.[activeCurrency];
-    if (regionalPrice) {
-      originalPrice = regionalPrice.original;
-      salePrice = regionalPrice.sale;
-    }
-
     return {
       ...item,
-      original_price: originalPrice,
-      sale_price: salePrice,
       claim_url: claimUrl
     };
   });

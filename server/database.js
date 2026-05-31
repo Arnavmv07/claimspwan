@@ -529,6 +529,7 @@ const CONSOLE_SALES = [
     id: 'xbox-forza-horizon-5',
     title: "Forza Horizon 5 (Standard Edition)",
     platform: "Xbox",
+    productId: '9nkx70bbcdrn',
     steamAppID: '1551360',
     original_price: "$59.99",
     sale_price: "$29.99",
@@ -542,12 +543,13 @@ const CONSOLE_SALES = [
     id: 'xbox-halo-infinite',
     title: "Halo Infinite",
     platform: "Xbox",
+    productId: '9pp627106m4v',
     steamAppID: '1240440',
     original_price: "$59.99",
     sale_price: "$29.99",
     discount: "50% OFF",
     image_url: "https://cdn.akamai.steamstatic.com/steam/apps/1240440/header.jpg",
-    claim_url: "https://www.microsoft.com/store/productId/9pp62z137j2z",
+    claim_url: "https://www.microsoft.com/store/productId/9pp627106m4v",
     upvotes: 420,
     rating: 4.3
   },
@@ -555,6 +557,7 @@ const CONSOLE_SALES = [
     id: 'xbox-cyberpunk-2077',
     title: "Cyberpunk 2077",
     platform: "Xbox",
+    productId: 'bx3m8l83bbrw',
     steamAppID: '1091500',
     original_price: "$59.99",
     sale_price: "$29.99",
@@ -573,7 +576,7 @@ const CONSOLE_SALES = [
     sale_price: "$49.99",
     discount: "28% OFF",
     image_url: "https://image.api.playstation.com/vulcan/ap/rnd/202306/1219/1c7b75d8ed9271516546560d219ad0b22ee0a263b4537bd8.png",
-    claim_url: "https://store.playstation.com/concept/10003613",
+    claim_url: "https://store.playstation.com/concept/10003732",
     upvotes: 892,
     rating: 4.9
   },
@@ -586,7 +589,7 @@ const CONSOLE_SALES = [
     sale_price: "$39.99",
     discount: "43% OFF",
     image_url: "https://image.api.playstation.com/vulcan/ap/rnd/202503/2016/b69c06fb108299866057126b0d3a0530bdf96a39d2ce1cb9.png",
-    claim_url: "https://store.playstation.com/concept/10001901",
+    claim_url: "https://store.playstation.com/concept/10001314",
     upvotes: 754,
     rating: 4.8
   },
@@ -599,7 +602,7 @@ const CONSOLE_SALES = [
     sale_price: "$39.99",
     discount: "43% OFF",
     image_url: "https://image.api.playstation.com/vulcan/ap/rnd/202206/0720/eEczyEMDd2BLa3dtkGJVE9Id.png",
-    claim_url: "https://store.playstation.com/concept/10003923",
+    claim_url: "https://store.playstation.com/concept/10003554",
     upvotes: 620,
     rating: 4.7
   },
@@ -612,11 +615,89 @@ const CONSOLE_SALES = [
     sale_price: "$29.99",
     discount: "57% OFF",
     image_url: "https://image.api.playstation.com/vulcan/ap/rnd/202210/0315/asGInU6zOf8SvsD4bxbXGdqU.png",
-    claim_url: "https://store.playstation.com/concept/10000282",
+    claim_url: "https://store.playstation.com/concept/10000293",
     upvotes: 412,
     rating: 4.6
   }
 ];
+
+async function fetchXboxLivePrice(productId, currency) {
+  try {
+    const mapping = {
+      USD: 'en-us',
+      GBP: 'en-gb',
+      EUR: 'de-de',
+      INR: 'en-in',
+      CAD: 'en-ca',
+      AUD: 'en-au',
+      JPY: 'ja-jp',
+      CNY: 'zh-cn'
+    };
+    const langLocale = mapping[currency] || 'en-us';
+    const url = `https://www.xbox.com/${langLocale}/games/store/a/${productId}`;
+    
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 6000);
+    
+    console.log(`[Scraper] Fetching live Xbox price for ${productId} (${currency}) from: ${url}`);
+    const res = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+      },
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+    
+    if (!res.ok) return null;
+    const html = await res.text();
+    
+    const stateStr = html.match(/window\.__PRELOADED_STATE__\s*=\s*({.+?});/);
+    if (!stateStr) return null;
+    
+    const state = JSON.parse(stateStr[1]);
+    const uppercaseId = productId.toUpperCase();
+    const productData = state?.core2?.products?.availabilitySummaries?.[uppercaseId];
+    if (!productData) return null;
+    
+    let bestPrice = null;
+    for (const skuId of Object.keys(productData)) {
+      const skuData = productData[skuId];
+      if (typeof skuData !== 'object') continue;
+      
+      for (const availId of Object.keys(skuData)) {
+        const availData = skuData[availId];
+        if (availData && availData.price) {
+          const priceInfo = availData.price;
+          const elig = priceInfo.eligibilityInfo || {};
+          const isStandardBuy = elig.eligibility === 'None' || elig.type === 'Unknown';
+          
+          if (isStandardBuy) {
+            bestPrice = {
+              original: priceInfo.msrp,
+              sale: priceInfo.listPrice,
+              currency: priceInfo.currency,
+              discountPercentage: priceInfo.discountPercentage
+            };
+            break;
+          } else if (!bestPrice) {
+            bestPrice = {
+              original: priceInfo.msrp,
+              sale: priceInfo.listPrice,
+              currency: priceInfo.currency,
+              discountPercentage: priceInfo.discountPercentage
+            };
+          }
+        }
+      }
+      if (bestPrice) break;
+    }
+    
+    return bestPrice;
+  } catch (e) {
+    console.error(`[Scraper] Error fetching Xbox price for ${productId}:`, e.message);
+    return null;
+  }
+}
 
 async function getSales(currency = 'USD') {
   const now = Date.now();
@@ -645,11 +726,9 @@ async function getSales(currency = 'USD') {
               if (steamDetails.image_url) imageUrl = steamDetails.image_url;
               
               // Dynamic Regional pricing override directly from official Steam storefront database!
-              if (cc !== 'us') {
-                if (steamDetails.original_price) originalPrice = steamDetails.original_price;
-                if (steamDetails.sale_price) salePrice = steamDetails.sale_price;
-                if (steamDetails.discount) discount = steamDetails.discount;
-              }
+              if (steamDetails.original_price) originalPrice = steamDetails.original_price;
+              if (steamDetails.sale_price) salePrice = steamDetails.sale_price;
+              if (steamDetails.discount) discount = steamDetails.discount;
             }
           }
 
@@ -679,11 +758,38 @@ async function getSales(currency = 'USD') {
     let salePrice = deal.sale_price;
     let discount = deal.discount;
 
-    // Apply 100% accurate, actual console storefront regional pricing!
-    const regionalPrice = CONSOLE_REGIONAL_PRICES[deal.id]?.[currency];
-    if (regionalPrice) {
-      originalPrice = regionalPrice.original;
-      salePrice = regionalPrice.sale;
+    // 1. Try to fetch live Xbox Store pricing dynamically
+    if (deal.platform === 'Xbox' && deal.productId) {
+      const livePrice = await fetchXboxLivePrice(deal.productId, currency);
+      if (livePrice) {
+        const symbolMap = {
+          USD: '$', GBP: '£', EUR: '€', INR: '₹', CAD: 'C$', AUD: 'A$', JPY: '¥', CNY: '¥'
+        };
+        const symbol = symbolMap[currency] || '$';
+        const isIntOnly = currency === 'JPY' || currency === 'INR' || currency === 'CNY';
+        const decimals = isIntOnly ? 0 : 2;
+        
+        originalPrice = `${symbol}${livePrice.original.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}`;
+        salePrice = `${symbol}${livePrice.sale.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}`;
+        discount = livePrice.discountPercentage > 0 ? `${Math.round(livePrice.discountPercentage)}% OFF` : '0% OFF';
+        
+        console.log(`[Scraper] Successfully updated ${deal.title} price to: ${salePrice} (Original: ${originalPrice}, Discount: ${discount})`);
+      }
+    }
+
+    // 2. If it's PlayStation or the scraper failed/returned null, fallback to the highly refined static matrix!
+    if (originalPrice === deal.original_price) {
+      const regionalPrice = CONSOLE_REGIONAL_PRICES[deal.id]?.[currency];
+      if (regionalPrice) {
+        originalPrice = regionalPrice.original;
+        salePrice = regionalPrice.sale;
+        // Recalculate discount dynamically
+        const originalVal = parseFloat(originalPrice.replace(/[^0-9.]/g, ''));
+        const saleVal = parseFloat(salePrice.replace(/[^0-9.]/g, ''));
+        if (originalVal && saleVal && originalVal > saleVal) {
+          discount = `${Math.round(((originalVal - saleVal) / originalVal) * 100)}% OFF`;
+        }
+      }
     }
 
     return {

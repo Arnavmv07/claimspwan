@@ -1,7 +1,7 @@
 {
-  "name": "claimspwan-server",
+  "name": "claimspawn-server",
   "version": "1.0.0",
-  "description": "Claimspwan backend service for game aggregation & affiliate redirects",
+  "description": "ClaimSpawn backend service for game aggregation & affiliate redirects",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

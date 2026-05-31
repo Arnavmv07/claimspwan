@@ -32,10 +32,10 @@ export default function GameDetail({
         setLoading(false);
         
         // Dynamically update document Title & Meta Description for SEO
-        document.title = `Claim ${data.title} for Free on ${data.platform} | Claimspwan`;
+        document.title = `Claim ${data.title} for Free on ${data.platform} | ClaimSpawn`;
         const metaDesc = document.querySelector('meta[name="description"]');
         if (metaDesc) {
-          metaDesc.setAttribute('content', `Get a 100% free digital copy of ${data.title} on ${data.platform}. View system requirements, claim steps, and reviews on Claimspwan.`);
+          metaDesc.setAttribute('content', `Get a 100% free digital copy of ${data.title} on ${data.platform}. View system requirements, claim steps, and reviews on ClaimSpawn.`);
         }
       })
       .catch(err => {
@@ -46,7 +46,7 @@ export default function GameDetail({
 
     // Reset title on unmount
     return () => {
-      document.title = "Claimspwan | Free Gaming Aggregator & Mystery Deals";
+      document.title = "ClaimSpawn | Free Gaming Aggregator & Mystery Deals";
       const metaDesc = document.querySelector('meta[name="description"]');
       if (metaDesc) {
         metaDesc.setAttribute('content', "Track and claim games currently available to claim for free across Steam, Epic Games, GOG, Prime Gaming, PlayStation, Xbox, and Nintendo! Optimized listings with affiliate claims.");
@@ -310,7 +310,7 @@ export default function GameDetail({
             {/* Dynamic recommendation perspective box */}
             <div className="bg-[#18233C]/50 border border-[#24324D]/60 rounded-2xl p-4.5 space-y-2">
               <span className="text-[10px] text-accent-purple font-black uppercase tracking-widest block flex items-center gap-1">
-                <Flame class="w-3.5 h-3.5 text-accent-purple" /> Claimspwan Aggregator Perspective
+                <Flame class="w-3.5 h-3.5 text-accent-purple" /> ClaimSpawn Aggregator Perspective
               </span>
               <p className="text-xs text-gray-400 leading-relaxed font-semibold">
                 ⭐️ <strong className="text-gray-300">Why we recommend it:</strong> Claiming free games from official storefronts like {game.platform} is a fantastic, zero-risk way to broaden your digital catalog. {game.title} currently scores a strong {game.community_rating > 0 ? `${game.community_rating}/5` : 'high rating'} within the community, making it an absolute must-add to your personal library before the promotional countdown ends!
