@@ -29,7 +29,7 @@ const SEED_DATA = [
     original_price: "$59.99",
     discount: "100% OFF",
     image_url: GAME_IMAGES.civilization,
-    status: "Active",
+    status: "Expired",
     claim_url: "https://store.steampowered.com/app/289070/Sid_Meiers_Civilization_VI/",
     epic_creator_tag: "",
     start_date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
