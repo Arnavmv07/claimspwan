@@ -22,34 +22,14 @@ export default function GameGrid({
   // Inject AdSlot into the rendering flow
   // We can render items in a flat grid. After every 4th card, we add an Ad slot.
   const renderGridItems = () => {
-    const items = [];
-    
-    games.forEach((game, index) => {
-      // 1. Render the actual game card
-      items.push(
-        <GameCard 
-          key={`game-${game.id}`}
-          game={game} 
-          onGameSelect={onGameSelect}
-          onClaimClick={onClaimClick}
-        />
-      );
-
-      // 2. If it's the 4th, 8th, 12th... card, inject the In-Feed Ad Unit
-      const position = index + 1;
-      if (position % 4 === 0) {
-        items.push(
-          <AdSlot 
-            key={`in-feed-ad-${position}`}
-            type="in-feed"
-            onAdClick={onAdClick}
-            onAdImpression={onAdImpression}
-          />
-        );
-      }
-    });
-
-    return items;
+    return games.map((game) => (
+      <GameCard 
+        key={`game-${game.id}`}
+        game={game} 
+        onGameSelect={onGameSelect}
+        onClaimClick={onClaimClick}
+      />
+    ));
   };
 
   return (
