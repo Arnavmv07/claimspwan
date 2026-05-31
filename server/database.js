@@ -606,29 +606,6 @@ async function getSales(currency = 'USD') {
     let salePrice = deal.sale_price;
     let discount = deal.discount;
 
-    const cc = getSteamCountryCode(currency);
-    if (deal.steamAppID && cc !== 'us') {
-      const steamDetails = await fetchSteamDetails(deal.steamAppID, cc);
-      if (steamDetails) {
-        if (steamDetails.original_price) originalPrice = steamDetails.original_price;
-        if (steamDetails.sale_price) {
-          // Calculate the sale price by applying the console deal's discount percentage to the Steam regional MSRP
-          const originalPriceNum = parseFloat(originalPrice.replace(/[^0-9.]/g, '')) || 0;
-          const discountPercent = parseFloat(deal.discount) / 100;
-          if (originalPriceNum > 0 && discountPercent > 0) {
-            const calculatedSale = originalPriceNum * (1 - discountPercent);
-            const currencySymbol = {
-              EUR: '€', GBP: '£', INR: '₹', CAD: 'C$', AUD: 'A$', JPY: '¥', CNY: '¥'
-            }[currency] || '$';
-            const decimals = (currency === 'JPY' || currency === 'INR' || currency === 'CNY') ? 0 : 2;
-            salePrice = `${currencySymbol}${calculatedSale.toFixed(decimals)}`;
-          } else {
-            salePrice = steamDetails.sale_price;
-          }
-        }
-      }
-    }
-
     return {
       ...deal,
       original_price: originalPrice,

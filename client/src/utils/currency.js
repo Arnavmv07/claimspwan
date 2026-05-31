@@ -64,19 +64,7 @@ export function getStorefrontLocale(currencyKey) {
 export function rewriteRegionalUrl(url, currencyKey) {
   if (!url) return url;
   
-  const locale = getStorefrontLocale(currencyKey);
-  
-  // 1. Rewrite Xbox Store links (e.g., xbox.com/en-us/games/store/ -> xbox.com/en-in/games/store/)
-  if (url.includes('xbox.com/')) {
-    return url.replace(/xbox\.com\/[a-z]{2}-[a-z]{2}\//i, `xbox.com/${locale}/`);
-  }
-  
-  // 2. Rewrite PlayStation Store links (e.g., playstation.com/en-us/concept/ -> playstation.com/en-in/concept/)
-  if (url.includes('playstation.com/')) {
-    return url.replace(/playstation\.com\/[a-z]{2}-[a-z]{2}\//i, `playstation.com/${locale}/`);
-  }
-  
-  // 3. Rewrite Steam links (append country code parameter &cc=IN/GB/DE/US/etc.)
+  // Rewrite Steam links (append country code parameter &cc=IN/GB/DE/US/etc.)
   if (url.includes('steampowered.com/') || url.includes('steamcommunity.com/')) {
     const steamCc = {
       USD: 'US',
