@@ -6,55 +6,55 @@ const BRAND_THEMES = {
     bg: 'border-blue-500/20 group-hover:border-blue-500/60',
     badge: 'bg-[#107c10] text-[#00F2FE]',
     accent: 'text-[#00F2FE]',
-    btn: 'bg-blue-600 hover:bg-blue-500 text-white shadow-[0_0_10px_rgba(0,0,255,0.2)]'
+    btn: 'bg-blue-600 hover:bg-blue-500 text-white shadow-[0_0_10px_rgba(37,99,235,0.25)]'
   },
   'Epic Games Store': {
     bg: 'border-white/10 group-hover:border-white/40',
     badge: 'bg-black border border-white/20 text-white',
     accent: 'text-white',
-    btn: 'bg-white hover:bg-gray-200 text-black shadow-[0_0_10px_rgba(255,255,255,0.1)]'
+    btn: 'bg-blue-600 hover:bg-blue-500 text-white shadow-[0_0_10px_rgba(37,99,235,0.25)]'
   },
   'GOG': {
     bg: 'border-purple-500/20 group-hover:border-purple-500/60',
     badge: 'bg-[#B624FF]/25 border border-[#B624FF]/40 text-[#B624FF]',
     accent: 'text-[#B624FF]',
-    btn: 'bg-purple-600 hover:bg-purple-500 text-white shadow-[0_0_10px_rgba(182,36,255,0.2)]'
+    btn: 'bg-blue-600 hover:bg-blue-500 text-white shadow-[0_0_10px_rgba(37,99,235,0.25)]'
   },
   'Amazon Games / Prime Gaming': {
     bg: 'border-[#9146FF]/20 group-hover:border-[#9146FF]/60',
     badge: 'bg-[#9146FF] text-white',
     accent: 'text-[#9146FF]',
-    btn: 'bg-[#9146FF] hover:bg-[#a66eff] text-white shadow-[0_0_10px_rgba(145,70,255,0.2)]'
+    btn: 'bg-blue-600 hover:bg-blue-500 text-white shadow-[0_0_10px_rgba(37,99,235,0.25)]'
   },
   'PlayStation Store': {
     bg: 'border-[#003087]/20 group-hover:border-[#003087]/60',
     badge: 'bg-[#003087] text-white',
     accent: 'text-[#00F2FE]',
-    btn: 'bg-[#003087] hover:bg-[#003fc1] text-white'
+    btn: 'bg-blue-600 hover:bg-blue-500 text-white shadow-[0_0_10px_rgba(37,99,235,0.25)]'
   },
   'Xbox Store': {
     bg: 'border-[#107c10]/20 group-hover:border-[#107c10]/60',
     badge: 'bg-[#107c10] text-white',
     accent: 'text-[#107c10]',
-    btn: 'bg-[#107c10] hover:bg-[#16a316] text-white shadow-[0_0_10px_rgba(16,124,16,0.2)]'
+    btn: 'bg-blue-600 hover:bg-blue-500 text-white shadow-[0_0_10px_rgba(37,99,235,0.25)]'
   },
   'Nintendo eShop': {
     bg: 'border-[#e60012]/20 group-hover:border-[#e60012]/60',
     badge: 'bg-[#e60012] text-white',
     accent: 'text-[#e60012]',
-    btn: 'bg-[#e60012] hover:bg-[#ff1a2b] text-white'
+    btn: 'bg-blue-600 hover:bg-blue-500 text-white shadow-[0_0_10px_rgba(37,99,235,0.25)]'
   },
   'Itch.io': {
     bg: 'border-[#fa5c5c]/20 group-hover:border-[#fa5c5c]/60',
     badge: 'bg-[#fa5c5c] text-white',
     accent: 'text-[#fa5c5c]',
-    btn: 'bg-[#fa5c5c] hover:bg-[#ff7575] text-white'
+    btn: 'bg-blue-600 hover:bg-blue-500 text-white shadow-[0_0_10px_rgba(37,99,235,0.25)]'
   },
   'default': {
     bg: 'border-[#24324D] group-hover:border-[#00F2FE]/40',
     badge: 'bg-[#1C2C4E] text-[#00F2FE]',
     accent: 'text-[#00F2FE]',
-    btn: 'bg-gradient-to-r from-accent-purple/90 to-accent-glow/90 hover:from-accent-purple hover:to-accent-glow text-white'
+    btn: 'bg-blue-600 hover:bg-blue-500 text-white shadow-[0_0_10px_rgba(37,99,235,0.25)]'
   }
 };
 
