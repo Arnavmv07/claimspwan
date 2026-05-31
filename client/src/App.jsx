@@ -289,7 +289,7 @@ export default function App() {
       {/* Footer */}
       <footer className="w-full bg-[#070A12] border-t border-[#24324D]/30 py-6 text-center select-none text-xs text-gray-500">
         <div className="max-w-7xl mx-auto px-4">
-          <p className="font-semibold">&copy; {new Date().getFullYear()} Claimspwan Aggregations. All rights reserved.</p>
+          <p className="font-semibold">&copy; {new Date().getFullYear()} ClaimSpawn Aggregations. All rights reserved.</p>
           <p className="mt-1 text-[10px] text-gray-600 font-medium leading-relaxed">
             All brand trademarks (Steam, Epic Games Store, GOG, Amazon Games, PlayStation, Xbox, Nintendo) belong to their respective owners.
             Mock monetization simulation. No real cryptocurrency or currency involved.

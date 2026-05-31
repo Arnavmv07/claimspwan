@@ -123,13 +123,13 @@ app.get('*', (req, res, next) => {
   }
   res.sendFile(path.join(clientBuildPath, 'index.html'), (err) => {
     if (err) {
-      res.status(200).send('Claimspwan Backend Service Running! (Run Client dev server to test UI)');
+      res.status(200).send('ClaimSpawn Backend Service Running! (Run Client dev server to test UI)');
     }
   });
 });
 
 // Start Server
 app.listen(PORT, () => {
-  console.log(`Claimspwan server listening on port ${PORT}`);
+  console.log(`ClaimSpawn server listening on port ${PORT}`);
   console.log(`API base route: http://localhost:${PORT}/api`);
 });

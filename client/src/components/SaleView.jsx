@@ -71,7 +71,7 @@ export default function SaleView({ sales, loading, error, onAdClick, onAdImpress
           <div>
             <h2 className="text-2xl font-black text-white flex items-center gap-2">
               <Percent class="w-6 h-6 text-accent-neon animate-pulse" />
-              Claimspawn Premium Sales Aggregator
+              ClaimSpawn Premium Sales Aggregator
             </h2>
             <p className="text-xs text-gray-400 mt-1 max-w-2xl font-medium">
               Real-time daily-updating sales across PC, Xbox, and PS5. We scan storefronts globally to aggregate premium AAA games currently selling at a massive discount compared to their launch prices.

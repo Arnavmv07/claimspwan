@@ -23,7 +23,7 @@ export default function Header({
           </div>
           <div className="flex flex-col">
             <span className="text-2xl font-black tracking-tight text-white flex items-center gap-1">
-              CLAIM<span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-neon to-accent-glow">SPWAN</span>
+              CLAIM<span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-neon to-accent-glow">SPAWN</span>
             </span>
             <span className="text-[9px] uppercase tracking-widest text-gray-500 font-extrabold -mt-1 group-hover:text-accent-neon transition-colors">Free Gaming Aggregator</span>
           </div>
