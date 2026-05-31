@@ -220,13 +220,6 @@ export default function App() {
               />
             )}
 
-            {/* Leaderboard Sponsored Banner slot */}
-            <AdSlot 
-              type="leaderboard" 
-              onAdClick={handleAdClick} 
-              onAdImpression={handleAdImpression} 
-            />
-
             {/* Main responsive grid layout with native native ad cards */}
             <GameGrid 
               games={filteredGames}
@@ -251,9 +244,6 @@ export default function App() {
           onAdImpression={handleAdImpression}
         />
       )}
-
-      {/* Floating HUD Panel Tracking Simulated Earnings */}
-      <PublisherHUD stats={adStats} />
 
       {/* Footer */}
       <footer className="w-full bg-[#070A12] border-t border-[#24324D]/30 py-6 text-center select-none text-xs text-gray-500">

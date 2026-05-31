@@ -429,15 +429,6 @@ export default function GameDetail({
             )}
           </div>
 
-          {/* Sticky Skyscraper Sponsored Ad (300x600) */}
-          <div className="w-full flex justify-center">
-            <AdSlot 
-              type="skyscraper"
-              onAdClick={onAdClick}
-              onAdImpression={onAdImpression}
-            />
-          </div>
-
         </div>
 
       </div>

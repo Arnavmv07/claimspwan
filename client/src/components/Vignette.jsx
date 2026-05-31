@@ -99,15 +99,6 @@ export default function Vignette({
           </p>
         </div>
 
-        {/* Sponsored Interstitial Ad Spot */}
-        <div className="w-full flex justify-center py-2">
-          <AdSlot 
-            type="vignette-ad" 
-            onAdClick={onAdClick}
-            onAdImpression={onAdImpression}
-          />
-        </div>
-
         {/* Dynamic Verification Seal */}
         <div className="flex items-center gap-1.5 px-4 py-2 bg-green-500/10 border border-green-500/20 rounded-xl text-[10px] text-green-400 font-extrabold">
           <ShieldCheck class="w-4 h-4" />

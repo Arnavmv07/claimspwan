@@ -86,12 +86,6 @@ export default function Header({
             />
             <Search class="absolute left-3 top-2.5 w-4 h-4 text-gray-500" />
           </div>
-
-          {/* Publisher Admin Speed Indicator */}
-          <div className="hidden lg:flex items-center gap-1.5 px-3 py-2 bg-gradient-to-r from-accent-purple/20 to-accent-neon/20 border border-accent-neon/30 rounded-xl text-[10px] text-accent-neon font-extrabold select-none">
-            <Award class="w-3.5 h-3.5 animate-spin-slow text-accent-gold" />
-            <span>EST. EARNINGS: ${(adStats?.earnings || 0).toFixed(4)}</span>
-          </div>
         </div>
 
       </div>
