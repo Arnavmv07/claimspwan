@@ -351,6 +351,9 @@ async function getGames(currency = 'USD') {
             original_price: worth,
             discount: "100% OFF",
             image_url: (() => {
+              if (gp.title && gp.title.toLowerCase().includes('xcom: chimera squad')) {
+                return 'https://cdn.akamai.steamstatic.com/steam/apps/882100/header.jpg';
+              }
               const img = gp.image || gp.thumbnail || '';
               if (!img || img.trim() === '' || img.toLowerCase().includes('placeholder') || img.toLowerCase().includes('no-image') || img === 'N/A') {
                 return getFallbackImage(gp.title, platformMapped);
