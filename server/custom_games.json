@@ -11,7 +11,9 @@
     "id": "custom-1781070980832",
     "status": "Active",
     "upvotes": 118,
-    "community_rating": 4.5
+    "community_rating": 4.5,
+    "start_date": "2026-06-10T00:00:00.000Z",
+    "end_date": "2026-12-31T23:59:59.000Z"
   },
   {
     "title": "Mafia II: Definitive Edition",
@@ -25,13 +27,15 @@
     "id": "custom-1781071057621",
     "status": "Active",
     "upvotes": 138,
-    "community_rating": 4.5
+    "community_rating": 4.5,
+    "start_date": "2026-06-10T00:00:00.000Z",
+    "end_date": "2026-12-31T23:59:59.000Z"
   },
   {
     "title": "Tomb Raider IV-VI Remastered",
     "platform": "Amazon Games / Prime Gaming",
     "original_price": "Rs 1300",
-    "image_url": "https://cdn.akamai.steamstatic.com/steam/apps/2573030/header.jpg",
+    "image_url": "https://cdn.akamai.steamstatic.com/steam/apps/391220/header.jpg",
     "claim_url": "https://luna.amazon.com/claims/tomb-raider-iv-vi-remastered-epic/dp/amzn1.pg.item.cba06ec0-64d2-445b-a17b-c3dba13414fe?ingress=amzn&ref_=SM_TombRaiderIVVIRemastered_S01_FGWP_CRWN",
     "description": "Included Game Titles\n\nTomb Raider: The Last Revelation – Lara Croft discovers the lost tomb of the Egyptian God Set, unwittingly unleashing him and fulfilling an ancient prophecy—one that plunges mankind into darkness.\n\nTomb Raider: Chronicles – Following the events of The Last Revelation, Lara Croft is buried in an Egyptian tomb and is presumed dead. At her memorial, those closest to her reminisce about secrets from her past.\n\nTomb Raider: The Angel of Darkness – Accused of murder, Lara becomes a fugitive on the run, while uncovering a sinister conspiracy involving alchemical experiments and the search for ancient artifacts.",
     "instructions": "1. Log in to your Amazon Prime Account.\n2. Click the Claim button.\n3. Keep the game forever.",
@@ -39,6 +43,8 @@
     "id": "custom-1781071155257",
     "status": "Active",
     "upvotes": 113,
-    "community_rating": 4.5
+    "community_rating": 4.5,
+    "start_date": "2026-06-10T00:00:00.000Z",
+    "end_date": "2026-12-31T23:59:59.000Z"
   }
 ]

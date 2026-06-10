@@ -840,7 +840,9 @@ async function addCustomGame(gameData) {
     id: `custom-${Date.now()}`,
     status: 'Active',
     upvotes: Math.floor(Math.random() * 50) + 100,
-    community_rating: 4.5
+    community_rating: 4.5,
+    start_date: new Date().toISOString(),
+    end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
   };
   
   customGames.push(newGame);
