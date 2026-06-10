@@ -142,6 +142,39 @@ app.post('/api/games/:id/click', (req, res) => {
   }
 });
 
+// Programmatic SEO Sitemap Generator
+app.get('/sitemap.xml', async (req, res) => {
+  try {
+    const games = await db.getGames('USD');
+    const activeGames = games.filter(g => g.status === 'Active' || g.status === 'Upcoming');
+
+    let sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://claimspawn.store/</loc>
+    <changefreq>hourly</changefreq>
+    <priority>1.0</priority>
+  </url>`;
+
+    activeGames.forEach(game => {
+      sitemap += `
+  <url>
+    <loc>https://claimspawn.store/api/share/${game.id}</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>`;
+    });
+
+    sitemap += `\n</urlset>`;
+
+    res.header('Content-Type', 'application/xml');
+    res.send(sitemap);
+  } catch (err) {
+    console.error('Error generating sitemap:', err);
+    res.status(500).send('Server Error');
+  }
+});
+
 // RSS Feed endpoint for free Twitter automation (IFTTT/dlvr.it)
 app.get('/api/rss', async (req, res) => {
   try {
