@@ -10,6 +10,6 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.19.2",
-    "twitter-api-v2": "^1.29.0"
+    "rss": "^1.2.2"
   }
 }

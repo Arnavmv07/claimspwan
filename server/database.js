@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const twitterBot = require('./twitterBot');
 
 const DB_PATH = path.join(__dirname, 'database.json');
 
@@ -401,11 +400,6 @@ async function getGames(currency = 'USD') {
         }
         
         saveGames(mergedGames);
-        
-        // Asynchronously check and tweet any brand new games detected
-        twitterBot.checkAndTweetNewGames(mergedGames).catch(err => {
-          console.error('Twitter Bot background task error:', err);
-        });
         
         memoryCache.data = mergedGames;
         memoryCache.expiry = now + CACHE_DURATION;
@@ -853,11 +847,6 @@ async function addCustomGame(gameData) {
   
   customGames.push(newGame);
   fs.writeFileSync(customPath, JSON.stringify(customGames, null, 2), 'utf8');
-  
-  // Trigger Twitter bot for custom games
-  twitterBot.tweetCustomGame(newGame).catch(err => {
-    console.error('Twitter Bot error on custom game:', err);
-  });
   
   // Force cache refresh
   memoryCache.expiry = 0;

@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const db = require('./database');
-const twitterBot = require('./twitterBot');
+const rssFeed = require('./rssFeed');
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -130,14 +130,15 @@ app.post('/api/games/custom', async (req, res) => {
   }
 });
 
-// Test endpoint for Twitter Bot
-app.get('/api/test-tweet', async (req, res) => {
+// RSS Feed endpoint for free Twitter automation (IFTTT)
+app.get('/api/rss', async (req, res) => {
   try {
-    const tweetData = await twitterBot.sendTestTweet();
-    res.json({ success: true, message: 'Tweet sent successfully!', data: tweetData });
+    const xml = await rssFeed.generateRSSFeed();
+    res.set('Content-Type', 'text/xml');
+    res.send(xml);
   } catch (error) {
-    console.error('Twitter Test Error:', error.message);
-    res.status(500).json({ success: false, error: error.message });
+    console.error('RSS Feed Error:', error.message);
+    res.status(500).send('Internal Server Error generating RSS');
   }
 });
 
