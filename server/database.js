@@ -292,6 +292,21 @@ function saveGames(games) {
   }
 }
 
+// Helper to asynchronously trace the redirect chain to find the direct game link
+async function resolveFinalUrl(url) {
+  try {
+    const res = await fetch(url, { method: 'HEAD', redirect: 'follow' });
+    let finalUrl = res.url;
+    if (finalUrl.includes('store.steampowered.com') || finalUrl.includes('store.epicgames.com')) {
+      finalUrl = finalUrl.split('?')[0]; // strip tracking parameters for cleaner look
+    }
+    return finalUrl;
+  } catch (e) {
+    console.error('Failed to resolve URL:', url, e.message);
+    return url;
+  }
+}
+
 async function getGames(currency = 'USD') {
   const now = Date.now();
   
@@ -321,7 +336,7 @@ async function getGames(currency = 'USD') {
           return isGame;
         });
 
-        const mappedLiveGames = fullGamesOnly.map(gp => {
+        const mappedLiveGamesPromises = fullGamesOnly.map(async (gp) => {
           const platformMapped = mapPlatform(gp.platforms);
           
           let worth = gp.worth;
@@ -344,6 +359,8 @@ async function getGames(currency = 'USD') {
           const upvotes = existing ? existing.upvotes : ((gp.id % 350) + 120);
           const rating = existing ? existing.community_rating : parseFloat((4.1 + ((gp.id % 9) * 0.1)).toFixed(1));
 
+          const resolvedUrl = await resolveFinalUrl(gp.open_giveaway_url);
+
           return {
             id: `gamerpower-${gp.id}`,
             title: gp.title,
@@ -361,7 +378,7 @@ async function getGames(currency = 'USD') {
               return img;
             })(),
             status: "Active",
-            claim_url: gp.open_giveaway_url,
+            claim_url: resolvedUrl,
             epic_creator_tag: platformMapped === 'Epic Games Store' ? 'lootquest-20' : '',
             start_date: new Date(now - 2 * 24 * 60 * 60 * 1000).toISOString(),
             end_date: endDate,
@@ -375,6 +392,8 @@ async function getGames(currency = 'USD') {
             }
           };
         });
+
+        const mappedLiveGames = await Promise.all(mappedLiveGamesPromises);
 
         // MERGE: Keep all mapped live games AND all seeded games, deduplicated by ID
         const mergedGames = [...mappedLiveGames];
