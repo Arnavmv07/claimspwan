@@ -130,7 +130,7 @@ app.post('/api/games/custom', async (req, res) => {
   }
 });
 
-// RSS Feed endpoint for free Twitter automation (IFTTT)
+// RSS Feed endpoint for free Twitter automation (IFTTT/dlvr.it)
 app.get('/api/rss', async (req, res) => {
   try {
     const xml = await rssFeed.generateRSSFeed();
@@ -139,6 +139,57 @@ app.get('/api/rss', async (req, res) => {
   } catch (error) {
     console.error('RSS Feed Error:', error.message);
     res.status(500).send('Internal Server Error generating RSS');
+  }
+});
+
+// Dynamic OpenGraph Proxy for Social Media Sharing
+app.get('/api/share/:id', async (req, res) => {
+  const gameId = req.params.id;
+  try {
+    // We get the game directly from memory cache to be fast
+    const game = db.getGameById(gameId);
+
+    if (!game) {
+      return res.redirect(`https://claimspawn.store`);
+    }
+
+    // Generate the raw HTML with Meta tags for bots, and JS redirect for humans
+    const html = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Free Game: ${game.title}</title>
+    
+    <!-- Open Graph / Facebook / dlvr.it -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Free Game: ${game.title}" />
+    <meta property="og:description" content="Platform: ${game.platform} | Originally: ${game.original_price || 'Paid'}. Claim it now for 100% FREE!" />
+    <meta property="og:image" content="${game.image_url || 'https://claimspawn.store/default-share.jpg'}" />
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Free Game: ${game.title}" />
+    <meta name="twitter:description" content="Platform: ${game.platform} | Originally: ${game.original_price || 'Paid'}. Claim it now for 100% FREE!" />
+    <meta name="twitter:image" content="${game.image_url || 'https://claimspawn.store/default-share.jpg'}" />
+
+    <!-- Fallback instant redirect for browsers that don't support JS -->
+    <meta http-equiv="refresh" content="0; url=https://claimspawn.store/#${game.id}" />
+</head>
+<body>
+    <p>Redirecting you to the game...</p>
+    <!-- Instant redirect for actual humans clicking the link -->
+    <script>
+        window.location.replace("https://claimspawn.store/#${game.id}");
+    </script>
+</body>
+</html>
+    `;
+
+    res.send(html);
+  } catch (err) {
+    console.error('Share Proxy Error:', err);
+    res.redirect(`https://claimspawn.store`);
   }
 });
 

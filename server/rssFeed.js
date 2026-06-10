@@ -38,7 +38,7 @@ async function generateRSSFeed() {
     feed.item({
       title: `Free Game: ${game.title}`,
       description: tweetText,
-      url: `https://claimspawn.store/#${game.id}`, // Unique URL anchor
+      url: `https://claimspawn.store/api/share/${game.id}`, // Route through the proxy!
       guid: game.id.toString(), // Extremely important so it doesn't double-post
       date: game.published_date || new Date().toUTCString(),
       enclosure: game.image_url ? { url: game.image_url, type: 'image/jpeg' } : undefined
