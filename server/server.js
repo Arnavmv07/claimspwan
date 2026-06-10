@@ -114,6 +114,21 @@ app.get('/api/claim/:id', async (req, res) => {
   }
 });
 
+// Post a custom game (Admin Panel)
+app.post('/api/games/custom', async (req, res) => {
+  try {
+    const gameData = req.body;
+    if (!gameData.title || !gameData.claim_url) {
+      return res.status(400).json({ error: 'Title and Claim URL are required' });
+    }
+    const newGame = await db.addCustomGame(gameData);
+    res.status(201).json(newGame);
+  } catch (error) {
+    console.error('API Error /games/custom:', error);
+    res.status(500).json({ error: 'Failed to add custom game' });
+  }
+});
+
 // Serve frontend client in production
 const clientBuildPath = path.join(__dirname, '..', 'client', 'dist');
 app.use(express.static(clientBuildPath));

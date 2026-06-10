@@ -8,6 +8,7 @@ import Vignette from './components/Vignette';
 import PublisherHUD from './components/PublisherHUD';
 import AdSlot from './components/AdSlot';
 import SaleView from './components/SaleView';
+import AdminPanel from './components/AdminPanel';
 import { CURRENCIES, convertPrice, detectLocalCurrency } from './utils/currency';
 
 const AD_CPM_RATES = {
@@ -36,6 +37,7 @@ export default function App() {
   const [activePlatform, setActivePlatform] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGameId, setSelectedGameId] = useState(null); // String or null
+  const [isAdminView, setIsAdminView] = useState(false);
 
   // Vignette and Ad States
   const [vignetteGame, setVignetteGame] = useState(null); // Game object or null
@@ -61,11 +63,17 @@ export default function App() {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash;
-      const match = hash.match(/^#\/game\/(.+)$/);
-      if (match) {
-        setSelectedGameId(match[1]);
-      } else {
+      if (hash === '#/admin') {
+        setIsAdminView(true);
         setSelectedGameId(null);
+      } else {
+        setIsAdminView(false);
+        const match = hash.match(/^#\/game\/(.+)$/);
+        if (match) {
+          setSelectedGameId(match[1]);
+        } else {
+          setSelectedGameId(null);
+        }
       }
     };
 
@@ -223,6 +231,13 @@ export default function App() {
               Retry Connection
             </button>
           </div>
+        ) : isAdminView ? (
+          <AdminPanel 
+            onClose={() => {
+              window.location.hash = '';
+              fetchGames();
+            }}
+          />
         ) : selectedGameId ? (
           /* Internal Router Detail Page (Deep Hash Landing Page) */
           <GameDetail 

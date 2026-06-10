@@ -381,6 +381,24 @@ async function getGames(currency = 'USD') {
           }
         });
         
+        // Merge custom user-added games
+        try {
+          const customPath = path.join(__dirname, 'custom_games.json');
+          if (fs.existsSync(customPath)) {
+            const customGames = JSON.parse(fs.readFileSync(customPath, 'utf8'));
+            if (Array.isArray(customGames)) {
+              // Add custom games to the beginning so they show up first
+              customGames.reverse().forEach(custom => {
+                if (!mergedGames.some(g => g.id === custom.id)) {
+                  mergedGames.unshift(custom);
+                }
+              });
+            }
+          }
+        } catch (e) {
+          console.error('Error merging custom games:', e);
+        }
+        
         saveGames(mergedGames);
         
         memoryCache.data = mergedGames;
@@ -808,10 +826,36 @@ async function getSales(currency = 'USD') {
   return mergedSales;
 }
 
+async function addCustomGame(gameData) {
+  const customPath = path.join(__dirname, 'custom_games.json');
+  let customGames = [];
+  try {
+    if (fs.existsSync(customPath)) {
+      customGames = JSON.parse(fs.readFileSync(customPath, 'utf8'));
+    }
+  } catch (e) {}
+
+  const newGame = {
+    ...gameData,
+    id: `custom-${Date.now()}`,
+    status: 'Active',
+    upvotes: Math.floor(Math.random() * 50) + 100,
+    community_rating: 4.5
+  };
+  
+  customGames.push(newGame);
+  fs.writeFileSync(customPath, JSON.stringify(customGames, null, 2), 'utf8');
+  
+  // Force cache refresh
+  memoryCache.expiry = 0;
+  return newGame;
+}
+
 module.exports = {
   getGames,
   getGameById,
   incrementUpvotes,
   addRating,
-  getSales
+  getSales,
+  addCustomGame
 };
