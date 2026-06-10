@@ -173,7 +173,7 @@ export default function SaleView({ sales, loading, error, onAdClick, onAdImpress
               ClaimSpawn Premium Sales Aggregator
             </h2>
             <p className="text-xs text-gray-400 mt-1 max-w-2xl font-medium">
-              Real-time daily-updating sales across PC, Xbox, and PS5. We scan storefronts globally to aggregate premium AAA games currently selling at a massive discount compared to their launch prices.
+              Real-time daily-updating sales for PC. We scan PC storefronts globally to aggregate premium AAA games currently selling at a massive discount compared to their launch prices.
             </p>
           </div>
 
@@ -188,7 +188,7 @@ export default function SaleView({ sales, loading, error, onAdClick, onAdImpress
           
           {/* Sub-tabs: PC, Xbox, PS5 */}
           <div className="flex items-center gap-1.5 bg-dark-bg/60 border border-[#24324D] p-1 rounded-2xl md:col-span-2 select-none shadow-inner">
-            {['PC', 'Xbox', 'PS5'].map((plat) => (
+            {['PC'].map((plat) => (
               <button
                 key={plat}
                 onClick={() => { setActiveSubTab(plat); setPriceFilter('all'); }}

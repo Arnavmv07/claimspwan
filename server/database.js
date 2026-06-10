@@ -800,9 +800,7 @@ async function getSales(currency = 'USD') {
     };
   });
 
-  const resolvedConsoleSales = await Promise.all(detailedConsolePromises);
-
-  const mergedSales = [...pcSales, ...resolvedConsoleSales];
+  const mergedSales = [...pcSales];
   salesCache[currency] = {
     data: mergedSales,
     expiry: now + SALES_CACHE_DURATION
