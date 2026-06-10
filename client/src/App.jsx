@@ -9,6 +9,7 @@ import PublisherHUD from './components/PublisherHUD';
 import AdSlot from './components/AdSlot';
 import SaleView from './components/SaleView';
 import AdminPanel from './components/AdminPanel';
+import LegalView from './components/LegalView';
 import { CURRENCIES, convertPrice, detectLocalCurrency } from './utils/currency';
 
 const AD_CPM_RATES = {
@@ -38,6 +39,7 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGameId, setSelectedGameId] = useState(null); // String or null
   const [isAdminView, setIsAdminView] = useState(false);
+  const [legalViewType, setLegalViewType] = useState(null); // 'privacy' | 'terms' | null
 
   // Vignette and Ad States
   const [vignetteGame, setVignetteGame] = useState(null); // Game object or null
@@ -66,8 +68,18 @@ export default function App() {
       if (hash === '#/admin') {
         setIsAdminView(true);
         setSelectedGameId(null);
+        setLegalViewType(null);
+      } else if (hash === '#/legal/privacy') {
+        setLegalViewType('privacy');
+        setIsAdminView(false);
+        setSelectedGameId(null);
+      } else if (hash === '#/legal/terms') {
+        setLegalViewType('terms');
+        setIsAdminView(false);
+        setSelectedGameId(null);
       } else {
         setIsAdminView(false);
+        setLegalViewType(null);
         const match = hash.match(/^#\/game\/(.+)$/);
         if (match) {
           setSelectedGameId(match[1]);
@@ -238,6 +250,11 @@ export default function App() {
               fetchGames();
             }}
           />
+        ) : legalViewType ? (
+          <LegalView 
+            type={legalViewType} 
+            onClose={() => window.location.hash = ''} 
+          />
         ) : selectedGameId ? (
           /* Internal Router Detail Page (Deep Hash Landing Page) */
           <GameDetail 
@@ -313,10 +330,15 @@ export default function App() {
       )}
 
       {/* Footer */}
-      <footer className="w-full bg-[#070A12] border-t border-[#24324D]/30 py-6 text-center select-none text-xs text-gray-500">
+      <footer className="w-full bg-[#070A12] border-t border-[#24324D]/30 py-8 text-center select-none text-xs text-gray-500">
         <div className="max-w-7xl mx-auto px-4">
+          <div className="flex justify-center space-x-6 mb-4">
+            <a href="#/legal/privacy" className="hover:text-accent-neon transition-colors font-semibold">Privacy Policy</a>
+            <a href="#/legal/terms" className="hover:text-accent-neon transition-colors font-semibold">Terms of Service</a>
+            <a href="mailto:support@claimspawn.store" className="hover:text-accent-neon transition-colors font-semibold">Contact Us</a>
+          </div>
           <p className="font-semibold">&copy; {new Date().getFullYear()} ClaimSpawn Aggregations. All rights reserved.</p>
-          <p className="mt-1 text-[10px] text-gray-600 font-medium leading-relaxed">
+          <p className="mt-2 text-[10px] text-gray-600 font-medium leading-relaxed max-w-2xl mx-auto">
             All brand trademarks (Steam, Epic Games Store, GOG, Amazon Games, PlayStation, Xbox, Nintendo) belong to their respective owners.
             Mock monetization simulation. No real cryptocurrency or currency involved.
           </p>
