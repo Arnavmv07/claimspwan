@@ -36,8 +36,8 @@ async function generateRSSFeed() {
     }
 
     feed.item({
-      title: `Free Game: ${game.title}`,
-      description: tweetText,
+      title: tweetText, // Swap this so dlvr.it tweets the viral text by default!
+      description: `Free Game: ${game.title}`,
       url: `https://claimspawn.store/api/share/${game.id}`, // Route through the proxy!
       guid: game.id.toString(), // Extremely important so it doesn't double-post
       date: game.published_date || new Date().toUTCString(),
