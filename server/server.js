@@ -130,6 +130,18 @@ app.post('/api/games/custom', async (req, res) => {
   }
 });
 
+// Record a click/claim for FOMO mechanics
+app.post('/api/games/:id/click', (req, res) => {
+  const { id } = req.params;
+  try {
+    db.incrementClaimCount(id);
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Error tracking click:', err);
+    res.status(500).json({ error: 'Failed to track' });
+  }
+});
+
 // RSS Feed endpoint for free Twitter automation (IFTTT/dlvr.it)
 app.get('/api/rss', async (req, res) => {
   try {

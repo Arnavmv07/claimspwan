@@ -358,6 +358,7 @@ async function getGames(currency = 'USD') {
           const existing = localGames.find(g => g.id === `gamerpower-${gp.id}`);
           const upvotes = existing ? existing.upvotes : ((gp.id % 350) + 120);
           const rating = existing ? existing.community_rating : parseFloat((4.1 + ((gp.id % 9) * 0.1)).toFixed(1));
+          const claim_count = existing && existing.claim_count ? existing.claim_count : ((gp.id % 500) + 1200);
 
           const resolvedUrl = await resolveFinalUrl(gp.open_giveaway_url);
 
@@ -383,6 +384,7 @@ async function getGames(currency = 'USD') {
             start_date: new Date(now - 2 * 24 * 60 * 60 * 1000).toISOString(),
             end_date: endDate,
             upvotes: upvotes,
+            claim_count: claim_count,
             community_rating: rating,
             description: gp.description || "",
             instructions: gp.instructions || "",
@@ -864,7 +866,8 @@ async function addCustomGame(gameData) {
     upvotes: Math.floor(Math.random() * 50) + 100,
     community_rating: 4.5,
     start_date: new Date().toISOString(),
-    end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+    end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+    claim_count: 3401
   };
   
   customGames.push(newGame);
@@ -872,12 +875,48 @@ async function addCustomGame(gameData) {
   
   // Force cache refresh
   memoryCache.expiry = 0;
-  return newGame;
+  saveGames(localGames);
+}
+
+function incrementClaimCount(id) {
+  let localGames = [];
+  if (fs.existsSync(DB_PATH)) {
+    try {
+      localGames = JSON.parse(fs.readFileSync(DB_PATH, 'utf8'));
+    } catch (e) {}
+  }
+
+  let found = localGames.find(g => g.id === id);
+  
+  if (found) {
+    found.claim_count = (found.claim_count || 1200) + 1;
+  } else {
+    // If not in local, we must pull from memory cache and save it local
+    if (memoryCache.data) {
+      const memGame = memoryCache.data.find(g => g.id === id);
+      if (memGame) {
+        const cloned = { ...memGame };
+        cloned.claim_count = (cloned.claim_count || 1200) + 1;
+        localGames.push(cloned);
+        found = cloned;
+      }
+    }
+  }
+
+  if (found) {
+    saveGames(localGames);
+    // Update memory cache instantly so it reflects
+    if (memoryCache.data) {
+      const memFound = memoryCache.data.find(g => g.id === id);
+      if (memFound) memFound.claim_count = found.claim_count;
+    }
+  }
 }
 
 module.exports = {
   getGames,
   getGameById,
+  incrementClaimCount,
   incrementUpvotes,
   addRating,
   getSales,

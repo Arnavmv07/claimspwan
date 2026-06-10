@@ -117,6 +117,14 @@ export default function GameCard({ game, onGameSelect, onClaimClick, currency })
               </span>
             )}
           </div>
+
+          {/* FOMO Badge */}
+          {game.claim_count && game.status === 'Active' && (
+            <div className="mt-2.5 flex items-center gap-1.5 text-[9px] text-[#00F2FE] bg-[#00F2FE]/10 px-2 py-0.5 rounded-md w-max border border-[#00F2FE]/20 animate-fade-in">
+              <div className="w-1.5 h-1.5 rounded-full bg-[#00F2FE] animate-pulse shadow-[0_0_5px_#00F2FE]"></div>
+              <span className="font-bold tracking-wide">🔥 {game.claim_count.toLocaleString()} people claimed this</span>
+            </div>
+          )}
         </div>
 
         {/* Pricing and Button Actions */}

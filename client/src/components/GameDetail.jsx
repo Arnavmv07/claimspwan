@@ -265,8 +265,16 @@ export default function GameDetail({
                 </div>
               </div>
 
+              {/* FOMO Badge */}
+              {game.claim_count && game.status === 'Active' && (
+                <div className="mt-6 mx-auto flex items-center justify-center gap-2 text-[11px] text-[#00F2FE] bg-[#00F2FE]/10 px-4 py-1.5 rounded-lg w-max border border-[#00F2FE]/20 animate-fade-in">
+                  <div className="w-2 h-2 rounded-full bg-[#00F2FE] animate-pulse shadow-[0_0_8px_#00F2FE]"></div>
+                  <span className="font-extrabold tracking-wide uppercase">🔥 {game.claim_count.toLocaleString()} people claimed this</span>
+                </div>
+              )}
+
               {/* CENTER CALL TO ACTION: Massive Glowing Pulse Claim Button */}
-              <div className="mt-8 relative select-none">
+              <div className="mt-4 relative select-none">
                 {game.status === 'Expired' ? (
                   <div className="w-full text-center py-4 bg-dark-bg/80 border border-red-500/20 text-red-500 font-extrabold uppercase rounded-2xl">
                     ⚠️ This Free Offer Has Expired

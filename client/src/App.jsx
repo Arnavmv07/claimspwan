@@ -162,6 +162,7 @@ export default function App() {
 
   // 3. Claim Trigger (Open Vignette overlay)
   const handleClaimClick = (game) => {
+    fetch(`/api/games/${game.id}/click`, { method: 'POST' }).catch(err => console.error('FOMO track failed', err));
     setVignetteGame(game);
   };
 
