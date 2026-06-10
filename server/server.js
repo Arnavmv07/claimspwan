@@ -147,11 +147,13 @@ app.get('/api/share/:id', async (req, res) => {
   const gameId = req.params.id;
   try {
     // We get the game directly from memory cache to be fast
-    const game = db.getGameById(gameId);
+    const game = await db.getGameById(gameId);
 
     if (!game) {
       return res.redirect(`https://claimspawn.store`);
     }
+
+    const ogImage = game.image_url || game.thumbnail || 'https://claimspawn.store/default-share.jpg';
 
     // Generate the raw HTML with Meta tags for bots, and JS redirect for humans
     const html = `
@@ -165,13 +167,13 @@ app.get('/api/share/:id', async (req, res) => {
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Free Game: ${game.title}" />
     <meta property="og:description" content="Platform: ${game.platform} | Originally: ${game.original_price || 'Paid'}. Claim it now for 100% FREE!" />
-    <meta property="og:image" content="${game.image_url || 'https://claimspawn.store/default-share.jpg'}" />
+    <meta property="og:image" content="${ogImage}" />
     
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Free Game: ${game.title}" />
     <meta name="twitter:description" content="Platform: ${game.platform} | Originally: ${game.original_price || 'Paid'}. Claim it now for 100% FREE!" />
-    <meta name="twitter:image" content="${game.image_url || 'https://claimspawn.store/default-share.jpg'}" />
+    <meta name="twitter:image" content="${ogImage}" />
 
     <!-- Fallback instant redirect for browsers that don't support JS -->
     <meta http-equiv="refresh" content="0; url=https://claimspawn.store/#${game.id}" />
