@@ -133,8 +133,19 @@ async function sendTestTweet() {
   const timestamp = new Date().toLocaleTimeString();
   const tweetText = `🛠️ ClaimSpawn Bot Test! Connected successfully at ${timestamp}.`;
   
-  const response = await twitterClient.v2.tweet(tweetText);
-  return response.data;
+  try {
+    const response = await twitterClient.v2.tweet(tweetText);
+    return response.data;
+  } catch (error) {
+    // If twitter-api-v2 throws an error, it usually has error.data or error.response
+    let detail = error.message;
+    if (error.data) {
+      detail = JSON.stringify(error.data);
+    } else if (error.response && error.response.data) {
+      detail = JSON.stringify(error.response.data);
+    }
+    throw new Error(`Twitter API Error: ${detail}`);
+  }
 }
 
 module.exports = {
