@@ -27,16 +27,21 @@ async function generateRSSFeed() {
     // Format a platform hashtag
     const platformTag = game.platform ? `#${game.platform.replace(/[^a-zA-Z0-9]/g, '')}` : '#PCGaming';
     
-    // IFTTT uses the title and description for its Tweet format.
-    // We will pack the tweet text into the description so IFTTT can easily map it.
-    const tweetText = `🚨 FREE GAME ALERT 🚨\n\n${game.title} is currently 100% FREE!\n(Originally ${game.original_price || 'Paid'})\n\n🎮 Platform: ${game.platform}\n🔗 Claim it now: https://claimspawn.store\n\n#FreeGames #PCGaming ${platformTag}`;
+    // We will pack the tweet text into the description so IFTTT/dlvr.it can easily map it.
+    // Injecting the HTML image tag directly into the description forces dlvr.it to use the game's cover art!
+    let tweetText = `🚨 FREE GAME ALERT 🚨\n\n${game.title} is currently 100% FREE!\n(Originally ${game.original_price || 'Paid'})\n\n🎮 Platform: ${game.platform}\n🔗 Claim it now: https://claimspawn.store\n\n#FreeGames #PCGaming ${platformTag}`;
+    
+    if (game.image_url) {
+      tweetText = `<img src="${game.image_url}" /><br/><br/>` + tweetText;
+    }
 
     feed.item({
       title: `Free Game: ${game.title}`,
       description: tweetText,
       url: `https://claimspawn.store/#${game.id}`, // Unique URL anchor
-      guid: game.id.toString(), // Extremely important so IFTTT doesn't double-post
-      date: game.published_date || new Date().toUTCString(), 
+      guid: game.id.toString(), // Extremely important so it doesn't double-post
+      date: game.published_date || new Date().toUTCString(),
+      enclosure: game.image_url ? { url: game.image_url, type: 'image/jpeg' } : undefined
     });
   }
 
