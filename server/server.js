@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const db = require('./database');
+const twitterBot = require('./twitterBot');
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -126,6 +127,17 @@ app.post('/api/games/custom', async (req, res) => {
   } catch (error) {
     console.error('API Error /games/custom:', error);
     res.status(500).json({ error: 'Failed to add custom game' });
+  }
+});
+
+// Test endpoint for Twitter Bot
+app.get('/api/test-tweet', async (req, res) => {
+  try {
+    const tweetData = await twitterBot.sendTestTweet();
+    res.json({ success: true, message: 'Tweet sent successfully!', data: tweetData });
+  } catch (error) {
+    console.error('Twitter Test Error:', error.message);
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
