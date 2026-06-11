@@ -275,16 +275,55 @@ app.get('/api/share/:id', async (req, res) => {
 const clientBuildPath = path.join(__dirname, '..', 'client', 'dist');
 app.use(express.static(clientBuildPath));
 
+// --- ANTI-ADBLOCK RETRIEVAL ENGINE ---
+let adblockScriptCache = '';
+let adblockScriptLastFetch = 0;
+const CACHE_DURATION = 10 * 60 * 1000; // 10 minutes cache
+
+async function getAntiAdblockScript() {
+  const now = Date.now();
+  if (adblockScriptCache && (now - adblockScriptLastFetch < CACHE_DURATION)) {
+    return adblockScriptCache;
+  }
+  
+  try {
+    const res = await fetch('https://adbpage.com/adblock?v=3');
+    if (res.ok) {
+      const text = await res.text();
+      if (text && text.includes('<script>')) {
+        adblockScriptCache = text;
+        adblockScriptLastFetch = now;
+        return adblockScriptCache;
+      }
+    }
+  } catch (err) {
+    console.error('Failed to fetch Adcash anti-adblock library:', err);
+  }
+  
+  // Fallback to standard library script tag if API fails
+  return `<script id="aclib" type="text/javascript" src="https://acscdn.com/script/aclib.js"></script>`;
+}
+
 // Catch-all route to serve Index for SPA (Vite)
-app.get('*', (req, res, next) => {
+app.get('*', async (req, res, next) => {
   if (req.url.startsWith('/api')) {
     return next();
   }
-  res.sendFile(path.join(clientBuildPath, 'index.html'), (err) => {
-    if (err) {
-      res.status(200).send('ClaimSpawn Backend Service Running! (Run Client dev server to test UI)');
-    }
-  });
+  
+  try {
+    const indexPath = path.join(clientBuildPath, 'index.html');
+    let html = await fs.promises.readFile(indexPath, 'utf8');
+    const adblockScript = await getAntiAdblockScript();
+    
+    // Inject the script
+    html = html.replace('<!-- ADCASH_ANTI_ADBLOCK_PLACEHOLDER -->', adblockScript);
+    
+    res.set('Content-Type', 'text/html');
+    res.send(html);
+  } catch (err) {
+    console.error('Error serving index.html:', err);
+    res.status(200).send('ClaimSpawn Backend Service Running! (Run Client dev server to test UI)');
+  }
 });
 
 // Start Server
