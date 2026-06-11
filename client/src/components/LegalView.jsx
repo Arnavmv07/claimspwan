@@ -25,7 +25,7 @@ export default function LegalView({ type, onClose }) {
               <p>ClaimSpawn ("we," "our," or "us") respects your privacy. We do not require users to create accounts, and we do not collect personally identifiable information (PII) such as names, emails, or phone numbers unless explicitly provided for customer support.</p>
               
               <h2 className="text-xl font-bold text-white mt-4">2. Cookies and Tracking</h2>
-              <p>We may use basic browser cookies and local storage to save your preferences (e.g., currency selections) and to ensure our website functions properly. We use third-party analytics and advertising partners (such as AdCash) which may use cookies to serve personalized ads based on your visit to this and other websites.</p>
+              <p>We may use basic browser cookies and local storage to save your preferences (e.g., currency selections) and to ensure our website functions properly. We use third-party analytics and advertising partners (such as AdCash and Monetag) which may use cookies to serve personalized ads based on your visit to this and other websites.</p>
               
               <h2 className="text-xl font-bold text-white mt-4">3. Third-Party Links</h2>
               <p>Our website contains links to external websites (Steam, Epic Games, GOG, etc.). We are not responsible for the privacy practices or the content of these external sites. Once you leave our site, this Privacy Policy no longer applies.</p>
