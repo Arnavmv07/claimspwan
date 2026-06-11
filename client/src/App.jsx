@@ -98,7 +98,7 @@ export default function App() {
   // Analytics Heartbeat
   useEffect(() => {
     const ping = () => {
-      fetch('/api/analytics/ping', { method: 'POST' }).catch(() => {});
+      fetch('/api/pulse', { method: 'POST' }).catch(() => {});
     };
     ping(); // initial ping
     const interval = setInterval(ping, 30000); // ping every 30s

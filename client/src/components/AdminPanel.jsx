@@ -22,7 +22,7 @@ export default function AdminPanel({ onClose }) {
   useEffect(() => {
     const fetchAnalytics = async () => {
       try {
-        const res = await fetch('/api/admin/analytics');
+        const res = await fetch('/api/admin/summary');
         if (res.ok) {
           const data = await res.json();
           setAnalytics(data);

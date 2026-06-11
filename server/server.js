@@ -147,7 +147,7 @@ app.post('/api/games/:id/click', (req, res) => {
 });
 
 // --- ANALYTICS ROUTES ---
-app.post('/api/analytics/ping', (req, res) => {
+app.post('/api/pulse', (req, res) => {
   const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '';
   const cleanIp = ip.split(',')[0].trim();
   const geo = geoip.lookup(cleanIp);
@@ -156,7 +156,7 @@ app.post('/api/analytics/ping', (req, res) => {
   res.status(200).send('OK');
 });
 
-app.get('/api/admin/analytics', (req, res) => {
+app.get('/api/admin/summary', (req, res) => {
   const now = Date.now();
   let count = 0;
   const demographics = {};
