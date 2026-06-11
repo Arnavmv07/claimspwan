@@ -1,7 +1,6 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const cron = require('node-cron');
 const geoip = require('geoip-lite');
 const db = require('./database');
 const rssFeed = require('./rssFeed');
