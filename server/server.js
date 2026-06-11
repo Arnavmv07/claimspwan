@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const cron = require('node-cron');
+const geoip = require('geoip-lite');
 const db = require('./database');
 const rssFeed = require('./rssFeed');
 
@@ -10,6 +12,9 @@ const PORT = process.env.PORT || 5001;
 // Middlewares
 app.use(cors());
 app.use(express.json());
+
+// --- ANALYTICS MEMORY STORE ---
+const activeSessions = new Map(); // Key: IP, Value: { timestamp, country }
 
 // Logger middleware
 app.use((req, res, next) => {
@@ -140,6 +145,33 @@ app.post('/api/games/:id/click', (req, res) => {
     console.error('Error tracking click:', err);
     res.status(500).json({ error: 'Failed to track' });
   }
+});
+
+// --- ANALYTICS ROUTES ---
+app.post('/api/analytics/ping', (req, res) => {
+  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '';
+  const cleanIp = ip.split(',')[0].trim();
+  const geo = geoip.lookup(cleanIp);
+  const country = geo ? geo.country : 'Unknown';
+  activeSessions.set(cleanIp, { timestamp: Date.now(), country });
+  res.status(200).send('OK');
+});
+
+app.get('/api/admin/analytics', (req, res) => {
+  const now = Date.now();
+  let count = 0;
+  const demographics = {};
+  
+  for (const [ip, session] of activeSessions.entries()) {
+    if (now - session.timestamp < 120000) { // Active in last 2 minutes
+      count++;
+      demographics[session.country] = (demographics[session.country] || 0) + 1;
+    } else {
+      activeSessions.delete(ip);
+    }
+  }
+  
+  res.json({ activeUsers: count, demographics });
 });
 
 // Programmatic SEO Sitemap Generator

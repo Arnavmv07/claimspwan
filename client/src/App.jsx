@@ -95,6 +95,16 @@ export default function App() {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
+  // Analytics Heartbeat
+  useEffect(() => {
+    const ping = () => {
+      fetch('/api/analytics/ping', { method: 'POST' }).catch(() => {});
+    };
+    ping(); // initial ping
+    const interval = setInterval(ping, 30000); // ping every 30s
+    return () => clearInterval(interval);
+  }, []);
+
   const handleSelectGame = (id) => {
     if (id) {
       window.location.hash = `#/game/${id}`;

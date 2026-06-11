@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Database, Save, X, Info } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Database, Save, X, Activity, Users, MapPin } from 'lucide-react';
 
 export default function AdminPanel({ onClose }) {
   const [formData, setFormData] = useState({
@@ -16,6 +16,25 @@ export default function AdminPanel({ onClose }) {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
+
+  const [analytics, setAnalytics] = useState({ activeUsers: 0, demographics: {} });
+
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      try {
+        const res = await fetch('/api/admin/analytics');
+        if (res.ok) {
+          const data = await res.json();
+          setAnalytics(data);
+        }
+      } catch (err) {
+        console.error('Failed to fetch analytics', err);
+      }
+    };
+    fetchAnalytics();
+    const interval = setInterval(fetchAnalytics, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleChange = (e) => {
     setFormData({
@@ -78,6 +97,42 @@ export default function AdminPanel({ onClose }) {
           <div>
             <h2 className="text-2xl font-black text-white">Manual Game Injector</h2>
             <p className="text-xs text-gray-400 mt-1">Secret Admin Panel to bypass Amazon anti-bot security.</p>
+          </div>
+        </div>
+
+        {/* Live Analytics Dashboard */}
+        <div className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-dark-bg border border-[#00F2FE]/30 rounded-2xl p-6 flex flex-col items-center justify-center relative overflow-hidden group">
+            <div className="absolute inset-0 bg-[#00F2FE]/5 group-hover:bg-[#00F2FE]/10 transition-colors"></div>
+            <Activity className="w-8 h-8 text-[#00F2FE] mb-2 animate-pulse" />
+            <h3 className="text-[#00F2FE] text-xs font-black uppercase tracking-widest mb-1">Live Active Users</h3>
+            <span className="text-5xl font-black text-white drop-shadow-[0_0_15px_#00F2FE]">{analytics.activeUsers}</span>
+          </div>
+          
+          <div className="bg-dark-bg border border-[#24324D] rounded-2xl p-6 flex flex-col justify-center">
+            <div className="flex items-center gap-2 mb-4">
+              <MapPin className="w-4 h-4 text-accent-neon" />
+              <h3 className="text-xs font-bold text-gray-300 uppercase">Top Demographics</h3>
+            </div>
+            {Object.keys(analytics.demographics).length === 0 ? (
+              <p className="text-sm text-gray-500 font-medium">Waiting for traffic...</p>
+            ) : (
+              <div className="space-y-2 max-h-24 overflow-y-auto pr-2 custom-scrollbar">
+                {Object.entries(analytics.demographics)
+                  .sort(([, a], [, b]) => b - a)
+                  .map(([country, count]) => (
+                    <div key={country} className="flex items-center justify-between">
+                      <span className="text-sm font-bold text-white flex items-center gap-2">
+                        <span className="text-lg">
+                          {country === 'Unknown' ? '🌍' : `https://flagcdn.com/16x12/${country.toLowerCase()}.png` ? <img src={`https://flagcdn.com/16x12/${country.toLowerCase()}.png`} alt={country} className="inline w-4 h-3 rounded-sm"/> : country}
+                        </span>
+                        {country}
+                      </span>
+                      <span className="text-xs font-black text-accent-neon bg-accent-neon/10 px-2 py-0.5 rounded-md">{count}</span>
+                    </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
