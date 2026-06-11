@@ -2,6 +2,8 @@ import React from 'react';
 
 export default function LegalView({ type, onClose }) {
   const isPrivacy = type === 'privacy';
+  const isTerms = type === 'terms';
+  const isAbout = type === 'about';
   
   return (
     <div className="w-full max-w-4xl mx-auto px-4 py-16 animate-fade-in text-gray-300">
@@ -14,11 +16,38 @@ export default function LegalView({ type, onClose }) {
 
       <div className="bg-[#121A2F] border border-[#24324D] rounded-2xl p-8 shadow-2xl">
         <h1 className="text-3xl font-black text-white mb-6 uppercase tracking-wider">
-          {isPrivacy ? 'Privacy Policy' : 'Terms of Service'}
+          {isAbout ? 'About Us' : isPrivacy ? 'Privacy Policy' : 'Terms of Service'}
         </h1>
         
         <div className="space-y-6 text-sm leading-relaxed">
-          {isPrivacy ? (
+          {isAbout ? (
+            <>
+              <p><strong>Last Updated:</strong> June 11, 2026</p>
+              
+              <h2 className="text-xl font-bold text-white mt-4">Our Mission</h2>
+              <p>
+                Welcome to <strong>ClaimSpawn</strong>. Our mission is to make gaming more accessible to players worldwide by aggregating 100% official, legally free digital game deals in one unified hub. We believe that everyone should have access to quality interactive entertainment without having to resort to security risks, spyware, or digital piracy.
+              </p>
+              
+              <h2 className="text-xl font-bold text-white mt-4">How It Works</h2>
+              <p>
+                We continuously scan and index active promotional campaigns across verified digital storefronts, including Steam, Epic Games Store, GOG, Prime Gaming, and major console stores. 
+              </p>
+              <p>
+                When you click to claim a game on ClaimSpawn, we route you directly to the official digital distribution platform to checkout. We do not sell keys, hold user accounts, or handle payment transactions. This ensures your digital licenses are bound directly to your official store credentials, keeping your gaming library secure and permanently yours.
+              </p>
+              
+              <h2 className="text-xl font-bold text-white mt-4">Data Sources & Attribution</h2>
+              <p>
+                To provide real-time updates on active gaming giveaways, our platforms aggregate official campaign data from verified APIs, including the GamerPower API. All game titles, brand marks, cover art, and store trademarks are the property of their respective owners and are used here solely for informational and editorial aggregation purposes.
+              </p>
+
+              <h2 className="text-xl font-bold text-white mt-4">Who We Are</h2>
+              <p>
+                ClaimSpawn was built by a small team of independent developers and passionate gaming advocates. We are dedicated to preservation, discoverability, and accessibility in the gaming community. If you have any inquiries, feedback, or partnerships, feel free to reach out to us at <a href="mailto:support@claimspawn.store" className="text-accent-neon hover:underline">support@claimspawn.store</a>.
+              </p>
+            </>
+          ) : isPrivacy ? (
             <>
               <p><strong>Last Updated:</strong> June 10, 2026</p>
               <h2 className="text-xl font-bold text-white mt-4">1. Information We Collect</h2>

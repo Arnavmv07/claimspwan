@@ -10,6 +10,7 @@ import AdSlot from './components/AdSlot';
 import SaleView from './components/SaleView';
 import AdminPanel from './components/AdminPanel';
 import LegalView from './components/LegalView';
+import CookieBanner from './components/CookieBanner';
 import { CURRENCIES, convertPrice, detectLocalCurrency } from './utils/currency';
 
 const AD_CPM_RATES = {
@@ -69,6 +70,10 @@ export default function App() {
         setIsAdminView(true);
         setSelectedGameId(null);
         setLegalViewType(null);
+      } else if (hash === '#/about') {
+        setLegalViewType('about');
+        setIsAdminView(false);
+        setSelectedGameId(null);
       } else if (hash === '#/legal/privacy') {
         setLegalViewType('privacy');
         setIsAdminView(false);
@@ -344,6 +349,7 @@ export default function App() {
       <footer className="w-full bg-[#070A12] border-t border-[#24324D]/30 py-8 text-center select-none text-xs text-gray-500">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex justify-center space-x-6 mb-4">
+            <a href="#/about" className="hover:text-accent-neon transition-colors font-semibold">About Us</a>
             <a href="#/legal/privacy" className="hover:text-accent-neon transition-colors font-semibold">Privacy Policy</a>
             <a href="#/legal/terms" className="hover:text-accent-neon transition-colors font-semibold">Terms of Service</a>
             <a href="mailto:support@claimspawn.store" className="hover:text-accent-neon transition-colors font-semibold">Contact Us</a>
@@ -355,6 +361,9 @@ export default function App() {
           </p>
         </div>
       </footer>
+
+      {/* Cookie Consent Banner */}
+      <CookieBanner />
 
     </div>
   );
