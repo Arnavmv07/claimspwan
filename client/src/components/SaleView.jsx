@@ -85,7 +85,7 @@ const CONSOLE_UNIVERSAL_URLS = {
   'ps5-demons-souls': 'https://store.playstation.com/concept/10000293'
 };
 
-export default function SaleView({ sales, loading, error, onAdClick, onAdImpression, currency }) {
+export default function SaleView({ sales, loading, error, currency }) {
   const [activeSubTab, setActiveSubTab] = useState('PC'); // 'PC' | 'Xbox' | 'PS5'
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('default'); // 'default' | 'alpha-asc' | 'alpha-desc' | 'price-asc' | 'price-desc'
@@ -108,10 +108,6 @@ export default function SaleView({ sales, loading, error, onAdClick, onAdImpress
 
   const handleGetDealClick = (e, deal) => {
     e.stopPropagation();
-    // Simulate an ad click/impression occasionally on redirection to boost earnings
-    if (onAdClick) {
-      onAdClick('in-feed');
-    }
     const targetUrl = rewriteRegionalUrl(deal.claim_url, currency);
     window.open(targetUrl, '_blank', 'noopener,noreferrer');
   };

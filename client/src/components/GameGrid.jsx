@@ -1,13 +1,10 @@
 import React from 'react';
 import GameCard from './GameCard';
-import AdSlot from './AdSlot';
 
 export default function GameGrid({ 
   games, 
   onGameSelect, 
   onClaimClick,
-  onAdClick,
-  onAdImpression,
   currency
 }) {
   if (games.length === 0) {
@@ -20,8 +17,6 @@ export default function GameGrid({
     );
   }
 
-  // Inject AdSlot into the rendering flow
-  // We can render items in a flat grid. After every 4th card, we add an Ad slot.
   const renderGridItems = () => {
     return games.map((game) => (
       <GameCard 
@@ -42,7 +37,7 @@ export default function GameGrid({
         <h2 className="text-lg font-black uppercase tracking-wider text-gray-300 flex items-center gap-2">
           <span>🎮</span> EXPLORE FREE LOOT ({games.length})
         </h2>
-        <span className="text-xs text-gray-500 font-bold">Grid Ad Slots Active</span>
+        <span className="text-xs text-gray-500 font-bold">Live Aggregation</span>
       </div>
 
       {/* Grid Container */}

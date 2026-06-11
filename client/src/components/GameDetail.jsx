@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, ThumbsUp, ThumbsDown, Star, Calendar, Cpu, ShieldCheck, Gift, CheckCircle2, Bookmark, Flame } from 'lucide-react';
-import AdSlot from './AdSlot';
 import { convertPrice } from '../utils/currency';
 
 export default function GameDetail({ 
@@ -8,8 +7,6 @@ export default function GameDetail({
   onBack, 
   onClaimClick,
   allGames,
-  onAdClick,
-  onAdImpression,
   currency
 }) {
   const [game, setGame] = useState(null);

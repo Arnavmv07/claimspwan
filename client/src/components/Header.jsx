@@ -8,7 +8,6 @@ export default function Header({
   searchQuery, 
   setSearchQuery, 
   onLogoClick,
-  adStats,
   currency,
   setCurrency
 }) {

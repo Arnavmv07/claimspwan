@@ -5,18 +5,9 @@ import HeroCarousel from './components/HeroCarousel';
 import GameGrid from './components/GameGrid';
 import GameDetail from './components/GameDetail';
 import Vignette from './components/Vignette';
-import PublisherHUD from './components/PublisherHUD';
-import AdSlot from './components/AdSlot';
 import SaleView from './components/SaleView';
 import { CURRENCIES, convertPrice, detectLocalCurrency } from './utils/currency';
 
-const AD_CPM_RATES = {
-  'leaderboard': 2.50,
-  'in-feed': 3.00,
-  'skyscraper': 4.50,
-  'vignette-ad': 12.00
-};
-const AD_CPC = 0.45; // Cost Per Click
 
 export default function App() {
   const [games, setGames] = useState([]);
@@ -37,13 +28,8 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGameId, setSelectedGameId] = useState(null); // String or null
 
-  // Vignette and Ad States
+  // Vignette State
   const [vignetteGame, setVignetteGame] = useState(null); // Game object or null
-  const [adStats, setAdStats] = useState({
-    impressions: 0,
-    clicks: 0,
-    earnings: 0.0
-  });
 
   // Fetch games database from backend on mount or when currency changes
   useEffect(() => {
@@ -120,25 +106,6 @@ export default function App() {
       });
   };
 
-  // 1. Log Ad Impressions
-  const handleAdImpression = (adType) => {
-    const cpm = AD_CPM_RATES[adType] || 1.50;
-    const addedRevenue = cpm / 1000.0;
-    setAdStats((prev) => ({
-      impressions: prev.impressions + 1,
-      clicks: prev.clicks,
-      earnings: parseFloat((prev.earnings + addedRevenue).toFixed(5))
-    }));
-  };
-
-  // 2. Log Ad Clicks
-  const handleAdClick = (adType) => {
-    setAdStats((prev) => ({
-      impressions: prev.impressions,
-      clicks: prev.clicks + 1,
-      earnings: parseFloat((prev.earnings + AD_CPC).toFixed(5))
-    }));
-  };
 
   // 3. Claim Trigger (Open Vignette overlay)
   const handleClaimClick = (game) => {
@@ -199,7 +166,6 @@ export default function App() {
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         onLogoClick={() => handleSelectGame(null)}
-        adStats={adStats}
         currency={currency}
         setCurrency={setCurrency}
       />
@@ -237,8 +203,6 @@ export default function App() {
             }} 
             onClaimClick={handleClaimClick}
             allGames={games}
-            onAdClick={handleAdClick}
-            onAdImpression={handleAdImpression}
             currency={currency}
           />
         ) : activeTab === 'Sale' ? (
@@ -247,8 +211,6 @@ export default function App() {
             sales={sales}
             loading={salesLoading}
             error={salesError}
-            onAdClick={handleAdClick}
-            onAdImpression={handleAdImpression}
             currency={currency}
           />
         ) : (
@@ -275,8 +237,6 @@ export default function App() {
               games={filteredGames}
               onGameSelect={(id) => handleSelectGame(id)}
               onClaimClick={handleClaimClick}
-              onAdClick={handleAdClick}
-              onAdImpression={handleAdImpression}
               currency={currency}
             />
           </>
@@ -291,8 +251,6 @@ export default function App() {
             setVignetteGame(null);
             fetchGames(); // refresh upvotes/ratings when returning to app
           }} 
-          onAdClick={handleAdClick}
-          onAdImpression={handleAdImpression}
           currency={currency}
         />
       )}
@@ -303,7 +261,6 @@ export default function App() {
           <p className="font-semibold">&copy; {new Date().getFullYear()} ClaimSpawn Aggregations. All rights reserved.</p>
           <p className="mt-1 text-[10px] text-gray-600 font-medium leading-relaxed">
             All brand trademarks (Steam, Epic Games Store, GOG, Amazon Games, PlayStation, Xbox, Nintendo) belong to their respective owners.
-            Mock monetization simulation. No real cryptocurrency or currency involved.
           </p>
         </div>
       </footer>

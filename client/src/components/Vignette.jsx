@@ -1,24 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { ShieldCheck, Flame, Loader2, Sparkles, X } from 'lucide-react';
-import AdSlot from './AdSlot';
 import { rewriteRegionalUrl } from '../utils/currency';
 
 export default function Vignette({ 
   game, 
   onClose, 
-  onAdClick, 
-  onAdImpression,
   currency
 }) {
   const [secondsLeft, setSecondsLeft] = useState(5);
   const [redirectReady, setRedirectReady] = useState(false);
 
   useEffect(() => {
-    // Record ad impression for the vignette ad unit
-    if (onAdImpression) {
-      onAdImpression('vignette-ad');
-    }
-
     if (secondsLeft <= 0) {
       setRedirectReady(true);
       executeRedirect();
