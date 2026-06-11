@@ -6,6 +6,9 @@ import GameGrid from './components/GameGrid';
 import GameDetail from './components/GameDetail';
 import Vignette from './components/Vignette';
 import SaleView from './components/SaleView';
+import AdminPanel from './components/AdminPanel';
+import LegalView from './components/LegalView';
+import CookieBanner from './components/CookieBanner';
 import { CURRENCIES, convertPrice, detectLocalCurrency } from './utils/currency';
 
 
@@ -27,6 +30,8 @@ export default function App() {
   const [activePlatform, setActivePlatform] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGameId, setSelectedGameId] = useState(null); // String or null
+  const [isAdminView, setIsAdminView] = useState(false);
+  const [legalViewType, setLegalViewType] = useState(null); // 'privacy' | 'terms' | null
 
   // Vignette State
   const [vignetteGame, setVignetteGame] = useState(null); // Game object or null
@@ -47,11 +52,31 @@ export default function App() {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash;
-      const match = hash.match(/^#\/game\/(.+)$/);
-      if (match) {
-        setSelectedGameId(match[1]);
-      } else {
+      if (hash === '#/admin') {
+        setIsAdminView(true);
         setSelectedGameId(null);
+        setLegalViewType(null);
+      } else if (hash === '#/about') {
+        setLegalViewType('about');
+        setIsAdminView(false);
+        setSelectedGameId(null);
+      } else if (hash === '#/legal/privacy') {
+        setLegalViewType('privacy');
+        setIsAdminView(false);
+        setSelectedGameId(null);
+      } else if (hash === '#/legal/terms') {
+        setLegalViewType('terms');
+        setIsAdminView(false);
+        setSelectedGameId(null);
+      } else {
+        setIsAdminView(false);
+        setLegalViewType(null);
+        const match = hash.match(/^#\/game\/(.+)$/);
+        if (match) {
+          setSelectedGameId(match[1]);
+        } else {
+          setSelectedGameId(null);
+        }
       }
     };
 
@@ -59,6 +84,16 @@ export default function App() {
 
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  // Analytics Heartbeat
+  useEffect(() => {
+    const ping = () => {
+      fetch('/api/pulse', { method: 'POST' }).catch(() => {});
+    };
+    ping(); // initial ping
+    const interval = setInterval(ping, 30000); // ping every 30s
+    return () => clearInterval(interval);
   }, []);
 
   const handleSelectGame = (id) => {
@@ -109,6 +144,7 @@ export default function App() {
 
   // 3. Claim Trigger (Open Vignette overlay)
   const handleClaimClick = (game) => {
+    fetch(`/api/games/${game.id}/click`, { method: 'POST' }).catch(err => console.error('FOMO track failed', err));
     setVignetteGame(game);
   };
 
@@ -189,6 +225,18 @@ export default function App() {
               Retry Connection
             </button>
           </div>
+        ) : isAdminView ? (
+          <AdminPanel 
+            onClose={() => {
+              window.location.hash = '';
+              fetchGames();
+            }}
+          />
+        ) : legalViewType ? (
+          <LegalView 
+            type={legalViewType} 
+            onClose={() => window.location.hash = ''} 
+          />
         ) : selectedGameId ? (
           /* Internal Router Detail Page (Deep Hash Landing Page) */
           <GameDetail 
@@ -256,14 +304,23 @@ export default function App() {
       )}
 
       {/* Footer */}
-      <footer className="w-full bg-[#070A12] border-t border-[#24324D]/30 py-6 text-center select-none text-xs text-gray-500">
+      <footer className="w-full bg-[#070A12] border-t border-[#24324D]/30 py-8 text-center select-none text-xs text-gray-500">
         <div className="max-w-7xl mx-auto px-4">
+          <div className="flex justify-center space-x-6 mb-4">
+            <a href="#/about" className="hover:text-accent-neon transition-colors font-semibold">About Us</a>
+            <a href="#/legal/privacy" className="hover:text-accent-neon transition-colors font-semibold">Privacy Policy</a>
+            <a href="#/legal/terms" className="hover:text-accent-neon transition-colors font-semibold">Terms of Service</a>
+            <a href="mailto:support@claimspawn.store" className="hover:text-accent-neon transition-colors font-semibold">Contact Us</a>
+          </div>
           <p className="font-semibold">&copy; {new Date().getFullYear()} ClaimSpawn Aggregations. All rights reserved.</p>
-          <p className="mt-1 text-[10px] text-gray-600 font-medium leading-relaxed">
+          <p className="mt-2 text-[10px] text-gray-600 font-medium leading-relaxed max-w-2xl mx-auto">
             All brand trademarks (Steam, Epic Games Store, GOG, Amazon Games, PlayStation, Xbox, Nintendo) belong to their respective owners.
           </p>
         </div>
       </footer>
+
+      {/* Cookie Consent Banner */}
+      <CookieBanner />
 
     </div>
   );

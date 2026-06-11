@@ -292,6 +292,21 @@ function saveGames(games) {
   }
 }
 
+// Helper to asynchronously trace the redirect chain to find the direct game link
+async function resolveFinalUrl(url) {
+  try {
+    const res = await fetch(url, { method: 'HEAD', redirect: 'follow' });
+    let finalUrl = res.url;
+    if (finalUrl.includes('store.steampowered.com') || finalUrl.includes('store.epicgames.com')) {
+      finalUrl = finalUrl.split('?')[0]; // strip tracking parameters for cleaner look
+    }
+    return finalUrl;
+  } catch (e) {
+    console.error('Failed to resolve URL:', url, e.message);
+    return url;
+  }
+}
+
 async function getGames(currency = 'USD') {
   const now = Date.now();
   
@@ -321,7 +336,7 @@ async function getGames(currency = 'USD') {
           return isGame;
         });
 
-        const mappedLiveGames = fullGamesOnly.map(gp => {
+        const mappedLiveGamesPromises = fullGamesOnly.map(async (gp) => {
           const platformMapped = mapPlatform(gp.platforms);
           
           let worth = gp.worth;
@@ -343,6 +358,9 @@ async function getGames(currency = 'USD') {
           const existing = localGames.find(g => g.id === `gamerpower-${gp.id}`);
           const upvotes = existing ? existing.upvotes : ((gp.id % 350) + 120);
           const rating = existing ? existing.community_rating : parseFloat((4.1 + ((gp.id % 9) * 0.1)).toFixed(1));
+          const claim_count = existing && existing.claim_count ? existing.claim_count : ((gp.id % 500) + 1200);
+
+          const resolvedUrl = await resolveFinalUrl(gp.open_giveaway_url);
 
           return {
             id: `gamerpower-${gp.id}`,
@@ -351,6 +369,9 @@ async function getGames(currency = 'USD') {
             original_price: worth,
             discount: "100% OFF",
             image_url: (() => {
+              if (gp.title && gp.title.toLowerCase().includes('xcom: chimera squad')) {
+                return 'https://cdn.akamai.steamstatic.com/steam/apps/882100/header.jpg';
+              }
               const img = gp.image || gp.thumbnail || '';
               if (!img || img.trim() === '' || img.toLowerCase().includes('placeholder') || img.toLowerCase().includes('no-image') || img === 'N/A') {
                 return getFallbackImage(gp.title, platformMapped);
@@ -358,11 +379,12 @@ async function getGames(currency = 'USD') {
               return img;
             })(),
             status: "Active",
-            claim_url: gp.open_giveaway_url,
+            claim_url: resolvedUrl,
             epic_creator_tag: platformMapped === 'Epic Games Store' ? 'lootquest-20' : '',
             start_date: new Date(now - 2 * 24 * 60 * 60 * 1000).toISOString(),
             end_date: endDate,
             upvotes: upvotes,
+            claim_count: claim_count,
             community_rating: rating,
             description: gp.description || "",
             instructions: gp.instructions || "",
@@ -373,6 +395,8 @@ async function getGames(currency = 'USD') {
           };
         });
 
+        const mappedLiveGames = await Promise.all(mappedLiveGamesPromises);
+
         // MERGE: Keep all mapped live games AND all seeded games, deduplicated by ID
         const mergedGames = [...mappedLiveGames];
         SEED_DATA.forEach(seeded => {
@@ -380,6 +404,24 @@ async function getGames(currency = 'USD') {
             mergedGames.push(seeded);
           }
         });
+        
+        // Merge custom user-added games
+        try {
+          const customPath = path.join(__dirname, 'custom_games.json');
+          if (fs.existsSync(customPath)) {
+            const customGames = JSON.parse(fs.readFileSync(customPath, 'utf8'));
+            if (Array.isArray(customGames)) {
+              // Add custom games to the beginning so they show up first
+              customGames.reverse().forEach(custom => {
+                if (!mergedGames.some(g => g.id === custom.id)) {
+                  mergedGames.unshift(custom);
+                }
+              });
+            }
+          }
+        } catch (e) {
+          console.error('Error merging custom games:', e);
+        }
         
         saveGames(mergedGames);
         
@@ -800,9 +842,7 @@ async function getSales(currency = 'USD') {
     };
   });
 
-  const resolvedConsoleSales = await Promise.all(detailedConsolePromises);
-
-  const mergedSales = [...pcSales, ...resolvedConsoleSales];
+  const mergedSales = [...pcSales];
   salesCache[currency] = {
     data: mergedSales,
     expiry: now + SALES_CACHE_DURATION
@@ -810,10 +850,75 @@ async function getSales(currency = 'USD') {
   return mergedSales;
 }
 
+async function addCustomGame(gameData) {
+  const customPath = path.join(__dirname, 'custom_games.json');
+  let customGames = [];
+  try {
+    if (fs.existsSync(customPath)) {
+      customGames = JSON.parse(fs.readFileSync(customPath, 'utf8'));
+    }
+  } catch (e) {}
+
+  const newGame = {
+    ...gameData,
+    id: `custom-${Date.now()}`,
+    status: 'Active',
+    upvotes: Math.floor(Math.random() * 50) + 100,
+    community_rating: 4.5,
+    start_date: new Date().toISOString(),
+    end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+    claim_count: 3401
+  };
+  
+  customGames.push(newGame);
+  fs.writeFileSync(customPath, JSON.stringify(customGames, null, 2), 'utf8');
+  
+  // Force cache refresh
+  memoryCache.expiry = 0;
+  saveGames(localGames);
+}
+
+function incrementClaimCount(id) {
+  let localGames = [];
+  if (fs.existsSync(DB_PATH)) {
+    try {
+      localGames = JSON.parse(fs.readFileSync(DB_PATH, 'utf8'));
+    } catch (e) {}
+  }
+
+  let found = localGames.find(g => g.id === id);
+  
+  if (found) {
+    found.claim_count = (found.claim_count || 1200) + 1;
+  } else {
+    // If not in local, we must pull from memory cache and save it local
+    if (memoryCache.data) {
+      const memGame = memoryCache.data.find(g => g.id === id);
+      if (memGame) {
+        const cloned = { ...memGame };
+        cloned.claim_count = (cloned.claim_count || 1200) + 1;
+        localGames.push(cloned);
+        found = cloned;
+      }
+    }
+  }
+
+  if (found) {
+    saveGames(localGames);
+    // Update memory cache instantly so it reflects
+    if (memoryCache.data) {
+      const memFound = memoryCache.data.find(g => g.id === id);
+      if (memFound) memFound.claim_count = found.claim_count;
+    }
+  }
+}
+
 module.exports = {
   getGames,
   getGameById,
+  incrementClaimCount,
   incrementUpvotes,
   addRating,
-  getSales
+  getSales,
+  addCustomGame
 };
