@@ -42,13 +42,11 @@ export default function Vignette({
     const localizedUrl = rewriteRegionalUrl(finalUrl, currency);
     console.log(`Triggering external claim redirect to: ${localizedUrl}`);
     
-    // Open in a new tab
-    window.open(localizedUrl, '_blank', 'noopener,noreferrer');
+    // Redirect current tab to completely bypass browser popup blockers
+    window.location.href = localizedUrl;
     
-    // Close the vignette and return user to site dashboard
-    setTimeout(() => {
-      onClose();
-    }, 500);
+    // Close the vignette immediately so that the back button brings them to the main page
+    onClose();
   };
 
   return (
@@ -92,6 +90,25 @@ export default function Vignette({
           <p className="text-xs text-gray-400 mt-2 max-w-md mx-auto leading-relaxed">
             Please wait while we establish a secure connection. Your support through our affiliate tags helps keep ClaimSpawn 100% free!
           </p>
+        </div>
+
+        {/* Action Skip / Manual Redirect Button */}
+        <div className="pt-2 select-none">
+          {secondsLeft <= 0 ? (
+            <button
+              onClick={executeRedirect}
+              className="px-6 py-3 bg-gradient-to-r from-accent-neon to-accent-glow text-[#0B0F19] text-xs font-black uppercase rounded-xl shadow-glow-cyan animate-pulse flex items-center gap-2"
+            >
+              Redirecting... (Click here if not redirected)
+            </button>
+          ) : (
+            <button
+              onClick={executeRedirect}
+              className="px-6 py-2.5 bg-dark-bg/60 border border-[#24324D] hover:border-accent-neon text-gray-300 hover:text-white text-xs font-black uppercase rounded-xl transition-all"
+            >
+              Skip Countdown ({secondsLeft}s)
+            </button>
+          )}
         </div>
 
         {/* Dynamic Verification Seal */}
