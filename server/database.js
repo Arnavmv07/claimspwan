@@ -2,6 +2,26 @@ const fs = require('fs');
 const path = require('path');
 
 const DB_PATH = path.join(__dirname, 'database.json');
+const DELETED_GAMES_PATH = path.join(__dirname, 'deleted_games.json');
+
+function getDeletedGameIds() {
+  try {
+    if (fs.existsSync(DELETED_GAMES_PATH)) {
+      return JSON.parse(fs.readFileSync(DELETED_GAMES_PATH, 'utf8'));
+    }
+  } catch (e) {
+    console.error('Error reading deleted_games.json:', e);
+  }
+  return [];
+}
+
+function saveDeletedGameIds(ids) {
+  try {
+    fs.writeFileSync(DELETED_GAMES_PATH, JSON.stringify(ids, null, 2), 'utf8');
+  } catch (e) {
+    console.error('Error writing deleted_games.json:', e);
+  }
+}
 
 // High-quality Unsplash gaming images for fallback/seeding
 const GAME_IMAGES = {
@@ -423,18 +443,21 @@ async function getGames(currency = 'USD') {
           console.error('Error merging custom games:', e);
         }
         
-        saveGames(mergedGames);
+        const deletedIds = getDeletedGameIds();
+        const filteredMerged = mergedGames.filter(g => !deletedIds.includes(g.id));
+        saveGames(filteredMerged);
         
-        memoryCache.data = mergedGames;
+        memoryCache.data = filteredMerged;
         memoryCache.expiry = now + CACHE_DURATION;
-        console.log(`[API] Success! Loaded and merged ${mergedGames.length} free games!`);
-        return mergedGames;
+        console.log(`[API] Success! Loaded and merged ${filteredMerged.length} free games!`);
+        return filteredMerged;
       }
     }
   } catch (error) {
     console.error('[API] Network/Fetch error, falling back to local cached DB:', error);
   }
 
+  const deletedIds = getDeletedGameIds();
   if (localGames.length > 0) {
     // If cache mapping was previously done, make sure all seeded items are inside
     const mergedFallback = [...localGames];
@@ -443,14 +466,16 @@ async function getGames(currency = 'USD') {
         mergedFallback.push(seeded);
       }
     });
-    memoryCache.data = mergedFallback;
+    const filteredFallback = mergedFallback.filter(g => !deletedIds.includes(g.id));
+    memoryCache.data = filteredFallback;
     memoryCache.expiry = now + 15000;
-    return mergedFallback;
+    return filteredFallback;
   }
   
-  memoryCache.data = SEED_DATA;
+  const filteredSeed = SEED_DATA.filter(g => !deletedIds.includes(g.id));
+  memoryCache.data = filteredSeed;
   memoryCache.expiry = now + 15000;
-  return SEED_DATA;
+  return filteredSeed;
 }
 
 async function getGameById(id) {
@@ -875,7 +900,41 @@ async function addCustomGame(gameData) {
   
   // Force cache refresh
   memoryCache.expiry = 0;
-  saveGames(localGames);
+  await getGames();
+  return newGame;
+}
+
+async function deleteGame(id) {
+  // 1. Add to deleted_games.json exclusions
+  const deletedIds = getDeletedGameIds();
+  if (!deletedIds.includes(id)) {
+    deletedIds.push(id);
+    saveDeletedGameIds(deletedIds);
+  }
+
+  // 2. If it's a custom game, clean it up from custom_games.json
+  if (id.startsWith('custom-')) {
+    const customPath = path.join(__dirname, 'custom_games.json');
+    try {
+      if (fs.existsSync(customPath)) {
+        const customGames = JSON.parse(fs.readFileSync(customPath, 'utf8'));
+        if (Array.isArray(customGames)) {
+          const filteredCustom = customGames.filter(g => g.id !== id);
+          fs.writeFileSync(customPath, JSON.stringify(filteredCustom, null, 2), 'utf8');
+        }
+      }
+    } catch (e) {
+      console.error('Error updating custom_games.json during delete:', e);
+    }
+  }
+
+  // 3. Force cache refresh
+  memoryCache.expiry = 0;
+  
+  // 4. Trigger getGames to save updated list to disk and cache
+  await getGames();
+  
+  return true;
 }
 
 function incrementClaimCount(id) {
@@ -920,5 +979,6 @@ module.exports = {
   incrementUpvotes,
   addRating,
   getSales,
-  addCustomGame
+  addCustomGame,
+  deleteGame
 };

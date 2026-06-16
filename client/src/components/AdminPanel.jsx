@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Database, Save, X, Activity, Users, MapPin } from 'lucide-react';
+import { Database, Save, X, Activity, Users, MapPin, Search, Trash2 } from 'lucide-react';
 
 export default function AdminPanel({ onClose }) {
   const [formData, setFormData] = useState({
@@ -16,6 +16,11 @@ export default function AdminPanel({ onClose }) {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
+  
+  const [games, setGames] = useState([]);
+  const [gamesLoading, setGamesLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [deletingId, setDeletingId] = useState(null);
 
   const [analytics, setAnalytics] = useState({ activeUsers: 0, demographics: {} });
 
@@ -34,6 +39,25 @@ export default function AdminPanel({ onClose }) {
     fetchAnalytics();
     const interval = setInterval(fetchAnalytics, 5000);
     return () => clearInterval(interval);
+  }, []);
+
+  const fetchGamesList = async () => {
+    setGamesLoading(true);
+    try {
+      const res = await fetch('/api/games');
+      if (res.ok) {
+        const data = await res.json();
+        setGames(data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch games list', err);
+    } finally {
+      setGamesLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchGamesList();
   }, []);
 
   const handleChange = (e) => {
@@ -62,6 +86,9 @@ export default function AdminPanel({ onClose }) {
         throw new Error('Failed to save game');
       }
 
+      const savedGame = await res.json();
+      setGames(prev => [savedGame, ...prev]);
+
       setSuccess('Game successfully injected into live database!');
       setFormData({
         title: '',
@@ -79,6 +106,32 @@ export default function AdminPanel({ onClose }) {
       setLoading(false);
     }
   };
+
+  const handleDelete = async (id) => {
+    setError('');
+    setSuccess('');
+    try {
+      const res = await fetch(`/api/games/${id}`, {
+        method: 'DELETE'
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to delete game listing');
+      }
+
+      setGames(games.filter(g => g.id !== id));
+      setSuccess('Game listing successfully deleted!');
+      setDeletingId(null);
+    } catch (err) {
+      setError(err.message);
+      setDeletingId(null);
+    }
+  };
+
+  const filteredGames = games.filter(game => 
+    (game.title || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (game.platform || '').toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="w-full max-w-3xl mx-auto px-4 py-12">
@@ -261,6 +314,116 @@ export default function AdminPanel({ onClose }) {
           </div>
 
         </form>
+
+        {/* Manage Listings Section */}
+        <div className="mt-12 border-t border-[#24324D] pt-8">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div>
+              <h3 className="text-xl font-black text-white flex items-center gap-2">
+                <Database className="w-5 h-5 text-accent-neon" />
+                Manage Active Listings
+              </h3>
+              <p className="text-xs text-gray-400 mt-1">
+                Remove seeded, custom, or live GamerPower API games.
+              </p>
+            </div>
+            
+            {/* Search Box */}
+            <div className="relative max-w-xs w-full">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search listings..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-dark-bg/60 border border-[#24324D] rounded-xl pl-10 pr-4 py-2 text-xs text-white focus:outline-none focus:border-accent-neon transition-all"
+              />
+              {searchQuery && (
+                <button 
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white text-xs"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+          </div>
+
+          {gamesLoading ? (
+            <div className="flex flex-col items-center justify-center py-12">
+              <div className="w-8 h-8 rounded-full border-t-2 border-accent-neon animate-spin mb-2"></div>
+              <p className="text-xs text-gray-400 font-bold">Loading listings...</p>
+            </div>
+          ) : (
+            <div className="space-y-3 max-h-96 overflow-y-auto pr-2 custom-scrollbar">
+              {filteredGames.length === 0 ? (
+                <div className="text-center py-12 border border-dashed border-[#24324D] rounded-2xl">
+                  <p className="text-sm text-gray-500 font-medium">No game listings found.</p>
+                </div>
+              ) : (
+                filteredGames.map((game) => (
+                  <div 
+                    key={game.id}
+                    className="flex items-center justify-between gap-4 p-4 bg-dark-bg/40 border border-[#24324D] hover:border-[#24324D]/80 rounded-2xl transition-all group relative overflow-hidden"
+                  >
+                    {/* Background glow on hover */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-accent-neon/0 via-accent-neon/5 to-accent-neon/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                    
+                    <div className="flex items-center gap-4 min-w-0 z-10">
+                      {/* Image Thumbnail */}
+                      <img 
+                        src={game.image_url} 
+                        alt={game.title} 
+                        className="w-16 h-10 object-cover rounded-lg border border-[#24324D] bg-dark-bg flex-shrink-0"
+                      />
+                      <div className="min-w-0">
+                        <h4 className="text-sm font-bold text-white truncate group-hover:text-accent-neon transition-colors duration-200">
+                          {game.title}
+                        </h4>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-[#1e293b] text-gray-400 border border-[#334155]">
+                            {game.platform}
+                          </span>
+                          <span className="text-[10px] font-bold text-accent-neon bg-accent-neon/10 px-2 py-0.5 rounded">
+                            {game.original_price || 'Free'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Delete button or confirmation */}
+                    <div className="flex-shrink-0 z-10">
+                      {deletingId === game.id ? (
+                        <div className="flex items-center gap-1 bg-[#1e293b] p-1.5 rounded-xl border border-red-500/30">
+                          <button
+                            onClick={() => handleDelete(game.id)}
+                            className="px-2.5 py-1 bg-red-600 hover:bg-red-500 text-white text-[10px] font-black uppercase rounded-lg transition-colors shadow-lg shadow-red-500/20"
+                          >
+                            Delete
+                          </button>
+                          <button
+                            onClick={() => setDeletingId(null)}
+                            className="px-2.5 py-1 bg-[#0B0F19] text-gray-400 hover:text-white text-[10px] font-black uppercase rounded-lg transition-colors border border-[#334155]"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => setDeletingId(game.id)}
+                          className="p-2.5 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-all"
+                          title="Remove Listing"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          )}
+        </div>
 
       </div>
     </div>

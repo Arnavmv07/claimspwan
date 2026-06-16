@@ -134,6 +134,18 @@ app.post('/api/games/custom', async (req, res) => {
   }
 });
 
+// Delete a game listing (Admin Panel)
+app.delete('/api/games/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    await db.deleteGame(id);
+    res.json({ success: true, message: 'Game listing deleted successfully' });
+  } catch (error) {
+    console.error(`API Error /games/${req.params.id} DELETE:`, error);
+    res.status(500).json({ error: 'Failed to delete game listing' });
+  }
+});
+
 // Record a click/claim for FOMO mechanics
 app.post('/api/games/:id/click', (req, res) => {
   const { id } = req.params;
