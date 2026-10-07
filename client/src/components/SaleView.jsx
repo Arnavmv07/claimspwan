@@ -312,18 +312,20 @@ export default function SaleView({ sales, loading, error, currency }) {
                         {deal.title}
                       </h3>
                       
-                      {/* Telemetry info */}
-                      <div className="flex items-center gap-3 mt-2 text-[10px] text-gray-400 font-bold">
-                        <span className="flex items-center gap-1">
-                          <ThumbsUp class="w-3 h-3 text-accent-neon" />
-                          {(deal.upvotes || 0)} upvotes
-                        </span>
-                        {deal.rating > 0 && (
-                          <span className="flex items-center gap-0.5 text-accent-gold">
-                            ★ {deal.rating.toFixed(1)}
+                      {/* Telemetry info - only shown when real community votes exist */}
+                      {(deal.upvotes > 0 || deal.rating > 0) && (
+                        <div className="flex items-center gap-3 mt-2 text-[10px] text-gray-400 font-bold">
+                          <span className="flex items-center gap-1">
+                            <ThumbsUp class="w-3 h-3 text-accent-neon" />
+                            {(deal.upvotes || 0)} upvotes
                           </span>
-                        )}
-                      </div>
+                          {deal.rating > 0 && (
+                            <span className="flex items-center gap-0.5 text-accent-gold">
+                              ★ {deal.rating.toFixed(1)}
+                            </span>
+                          )}
+                        </div>
+                      )}
                     </div>
 
                     {/* Cost and Action button */}

@@ -105,18 +105,20 @@ export default function GameCard({ game, onGameSelect, onClaimClick, currency })
             {game.title}
           </h3>
           
-          {/* Rating and Upvote Row */}
-          <div className="flex items-center gap-3 mt-2 text-[10px] text-gray-400 font-bold">
-            <span className="flex items-center gap-1">
-              <ThumbsUp class="w-3 h-3 text-accent-neon" />
-              {(game.upvotes || 0)} upvotes
-            </span>
-            {game.community_rating > 0 && (
-              <span className="flex items-center gap-0.5 text-accent-gold">
-                ★ {game.community_rating.toFixed(1)}
+          {/* Rating and Upvote Row - only shown when real community votes exist */}
+          {(game.upvotes > 0 || game.community_rating > 0) && (
+            <div className="flex items-center gap-3 mt-2 text-[10px] text-gray-400 font-bold">
+              <span className="flex items-center gap-1">
+                <ThumbsUp class="w-3 h-3 text-accent-neon" />
+                {(game.upvotes || 0)} upvotes
               </span>
-            )}
-          </div>
+              {game.community_rating > 0 && (
+                <span className="flex items-center gap-0.5 text-accent-gold">
+                  ★ {game.community_rating.toFixed(1)}
+                </span>
+              )}
+            </div>
+          )}
 
           {/* FOMO Badge */}
           {game.claim_count && game.status === 'Active' && (

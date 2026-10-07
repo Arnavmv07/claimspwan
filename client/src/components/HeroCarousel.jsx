@@ -113,10 +113,12 @@ export default function HeroCarousel({ activeGames, onGameSelect, currency }) {
                 View Deal
               </button>
               
-              <div className="hidden sm:flex items-center gap-2 px-4 py-3 bg-dark-bg/60 border border-[#24324D] rounded-xl text-[10px] font-extrabold text-gray-400">
-                <span className="text-accent-neon">★</span>
-                <span>COMMUNITY RATING: {game.community_rating > 0 ? `${game.community_rating} / 5` : 'UNRATED'}</span>
-              </div>
+              {game.community_rating > 0 && (
+                <div className="hidden sm:flex items-center gap-2 px-4 py-3 bg-dark-bg/60 border border-[#24324D] rounded-xl text-[10px] font-extrabold text-gray-400">
+                  <span className="text-accent-neon">★</span>
+                  <span>COMMUNITY RATING: {game.community_rating} / 5</span>
+                </div>
+              )}
             </div>
 
           </div>

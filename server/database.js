@@ -182,8 +182,8 @@ const SEED_DATA = [
     epic_creator_tag: "",
     start_date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
     end_date: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toISOString(),
-    upvotes: 420,
-    community_rating: 4.6,
+    upvotes: 0,
+    community_rating: 0.0,
     description: "Civilization VI offers new ways to interact with your world: cities now physically expand across the map, active research in technology and culture unlocks new potential, and competing leaders will pursue their own agendas based on their historical traits as you race for one of five ways to achieve victory.",
     instructions: "1. Log in to your Steam Account. 2. Navigate to the Civilization VI Store Page. 3. Click 'Add to Library' to claim your game permanently for 100% free.",
     system_requirements: {
@@ -245,8 +245,8 @@ const SEED_DATA = [
     epic_creator_tag: "lootquest-20",
     start_date: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(),
     end_date: new Date(Date.now() - 13 * 24 * 60 * 60 * 1000).toISOString(),
-    upvotes: 2450,
-    community_rating: 4.8,
+    upvotes: 0,
+    community_rating: 0.0,
     description: "The Grand Theft Auto V: Premium Edition includes the complete Grand Theft Auto V story experience, free access to the ever-evolving Grand Theft Auto Online and all existing gameplay upgrades and content including The Doomsday Heist, Gunrunning, Smuggler’s Run, Bikers and much more.",
     instructions: "This deal has officially closed. Make sure to watch the Active Deals tab to catch the next premium mystery giveaway!",
     system_requirements: {
@@ -266,8 +266,8 @@ const SEED_DATA = [
     epic_creator_tag: "",
     start_date: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
     end_date: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toISOString(),
-    upvotes: 410,
-    community_rating: 4.2,
+    upvotes: 0,
+    community_rating: 0.0,
     description: "DiRT Rally 2.0 dares you to carve your way through a selection of iconic rally locations from across the globe, in the most powerful off-road vehicles ever made, knowing that the smallest mistake could end your stage.",
     instructions: "Deal expired on Humble Store. Keep watching the active aggregator calendar.",
     system_requirements: {
@@ -376,9 +376,9 @@ async function getGames(currency = 'USD') {
           }
           
           const existing = localGames.find(g => g.id === `gamerpower-${gp.id}`);
-          const upvotes = existing ? existing.upvotes : ((gp.id % 350) + 120);
-          const rating = existing ? existing.community_rating : parseFloat((4.1 + ((gp.id % 9) * 0.1)).toFixed(1));
-          const claim_count = existing && existing.claim_count ? existing.claim_count : ((gp.id % 500) + 1200);
+          const upvotes = existing ? existing.upvotes : 0;
+          const rating = existing ? existing.community_rating : 0.0;
+          const claim_count = existing && existing.claim_count ? existing.claim_count : 0;
 
           const resolvedUrl = await resolveFinalUrl(gp.open_giveaway_url);
 
@@ -603,8 +603,8 @@ const CONSOLE_SALES = [
     discount: "50% OFF",
     image_url: "https://cdn.akamai.steamstatic.com/steam/apps/1551360/header.jpg",
     claim_url: "https://www.microsoft.com/store/productId/9nkx70bbcdrn",
-    upvotes: 684,
-    rating: 4.8
+    upvotes: 0,
+    rating: 0.0
   },
   {
     id: 'xbox-halo-infinite',
@@ -617,8 +617,8 @@ const CONSOLE_SALES = [
     discount: "50% OFF",
     image_url: "https://cdn.akamai.steamstatic.com/steam/apps/1240440/header.jpg",
     claim_url: "https://www.microsoft.com/store/productId/9pp627106m4v",
-    upvotes: 420,
-    rating: 4.3
+    upvotes: 0,
+    rating: 0.0
   },
   {
     id: 'xbox-cyberpunk-2077',
@@ -631,8 +631,8 @@ const CONSOLE_SALES = [
     discount: "50% OFF",
     image_url: "https://cdn.akamai.steamstatic.com/steam/apps/1091500/header.jpg",
     claim_url: "https://www.microsoft.com/store/productId/bx3m8l83bbrw",
-    upvotes: 512,
-    rating: 4.2
+    upvotes: 0,
+    rating: 0.0
   },
   {
     id: 'ps5-spiderman-2',
@@ -644,8 +644,8 @@ const CONSOLE_SALES = [
     discount: "28% OFF",
     image_url: "https://image.api.playstation.com/vulcan/ap/rnd/202306/1219/1c7b75d8ed9271516546560d219ad0b22ee0a263b4537bd8.png",
     claim_url: "https://store.playstation.com/concept/10003732",
-    upvotes: 892,
-    rating: 4.9
+    upvotes: 0,
+    rating: 0.0
   },
   {
     id: 'ps5-god-of-war-ragnarok',
@@ -657,8 +657,8 @@ const CONSOLE_SALES = [
     discount: "43% OFF",
     image_url: "https://image.api.playstation.com/vulcan/ap/rnd/202503/2016/b69c06fb108299866057126b0d3a0530bdf96a39d2ce1cb9.png",
     claim_url: "https://store.playstation.com/concept/10001314",
-    upvotes: 754,
-    rating: 4.8
+    upvotes: 0,
+    rating: 0.0
   },
   {
     id: 'ps5-last-of-us-part-1',
@@ -670,8 +670,8 @@ const CONSOLE_SALES = [
     discount: "43% OFF",
     image_url: "https://image.api.playstation.com/vulcan/ap/rnd/202206/0720/eEczyEMDd2BLa3dtkGJVE9Id.png",
     claim_url: "https://store.playstation.com/concept/10003554",
-    upvotes: 620,
-    rating: 4.7
+    upvotes: 0,
+    rating: 0.0
   },
   {
     id: 'ps5-demons-souls',
@@ -683,8 +683,8 @@ const CONSOLE_SALES = [
     discount: "57% OFF",
     image_url: "https://image.api.playstation.com/vulcan/ap/rnd/202210/0315/asGInU6zOf8SvsD4bxbXGdqU.png",
     claim_url: "https://store.playstation.com/concept/10000293",
-    upvotes: 412,
-    rating: 4.6
+    upvotes: 0,
+    rating: 0.0
   }
 ];
 
@@ -808,8 +808,8 @@ async function getSales(currency = 'USD') {
             discount: discount,
             image_url: imageUrl,
             claim_url: `https://www.cheapshark.com/redirect?dealID=${deal.dealID}`,
-            upvotes: Math.round(parseFloat(deal.dealRating) * 50) + 120,
-            rating: parseFloat((parseFloat(deal.steamRatingPercent) / 20).toFixed(1)) || 4.2
+            upvotes: 0,
+            rating: 0.0
           };
         });
 
@@ -888,11 +888,11 @@ async function addCustomGame(gameData) {
     ...gameData,
     id: `custom-${Date.now()}`,
     status: 'Active',
-    upvotes: Math.floor(Math.random() * 50) + 100,
-    community_rating: 4.5,
+    upvotes: 0,
+    community_rating: 0.0,
     start_date: new Date().toISOString(),
     end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-    claim_count: 3401
+    claim_count: 0
   };
   
   customGames.push(newGame);
@@ -948,14 +948,14 @@ function incrementClaimCount(id) {
   let found = localGames.find(g => g.id === id);
   
   if (found) {
-    found.claim_count = (found.claim_count || 1200) + 1;
+    found.claim_count = (found.claim_count || 0) + 1;
   } else {
     // If not in local, we must pull from memory cache and save it local
     if (memoryCache.data) {
       const memGame = memoryCache.data.find(g => g.id === id);
       if (memGame) {
         const cloned = { ...memGame };
-        cloned.claim_count = (cloned.claim_count || 1200) + 1;
+        cloned.claim_count = (cloned.claim_count || 0) + 1;
         localGames.push(cloned);
         found = cloned;
       }
