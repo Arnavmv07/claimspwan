@@ -10,8 +10,8 @@
     "discount": "100% OFF",
     "id": "custom-1781070980832",
     "status": "Active",
-    "upvotes": 118,
-    "community_rating": 4.5,
+    "upvotes": 0,
+    "community_rating": 0.0,
     "start_date": "2026-06-10T00:00:00.000Z",
     "end_date": "2026-12-31T23:59:59.000Z"
   },
@@ -26,8 +26,8 @@
     "discount": "100% OFF",
     "id": "custom-1781071057621",
     "status": "Active",
-    "upvotes": 138,
-    "community_rating": 4.5,
+    "upvotes": 0,
+    "community_rating": 0.0,
     "start_date": "2026-06-10T00:00:00.000Z",
     "end_date": "2026-12-31T23:59:59.000Z"
   },
@@ -42,8 +42,8 @@
     "discount": "100% OFF",
     "id": "custom-1781071155257",
     "status": "Active",
-    "upvotes": 113,
-    "community_rating": 4.5,
+    "upvotes": 0,
+    "community_rating": 0.0,
     "start_date": "2026-06-10T00:00:00.000Z",
     "end_date": "2026-12-31T23:59:59.000Z"
   }

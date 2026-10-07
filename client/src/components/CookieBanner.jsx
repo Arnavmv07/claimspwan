@@ -30,7 +30,7 @@ export default function CookieBanner() {
           <div>
             <h4 className="text-sm font-bold text-white uppercase tracking-wider">Cookie & Privacy Consent</h4>
             <p className="text-xs text-gray-400 mt-1 leading-relaxed font-semibold">
-              We and our partners (including Google and Monetag) use cookies to customize your experience, analyze traffic, and serve personalized gaming deals. Review our <a href="#/legal/privacy" className="text-accent-neon hover:underline font-bold">Privacy Policy</a> to learn more.
+              We and our partners (including Google Analytics, Google AdSense, AdCash, and Monetag) use cookies to customize your experience, analyze traffic, and serve personalized gaming deals. Review our <a href="#/legal/privacy" className="text-accent-neon hover:underline font-bold">Privacy Policy</a> to learn more.
             </p>
           </div>
         </div>

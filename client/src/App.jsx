@@ -310,7 +310,7 @@ export default function App() {
             <a href="#/about" className="hover:text-accent-neon transition-colors font-semibold">About Us</a>
             <a href="#/legal/privacy" className="hover:text-accent-neon transition-colors font-semibold">Privacy Policy</a>
             <a href="#/legal/terms" className="hover:text-accent-neon transition-colors font-semibold">Terms of Service</a>
-            <a href="mailto:support@claimspawn.store" className="hover:text-accent-neon transition-colors font-semibold">Contact Us</a>
+            <a href="mailto:arnav@claimspawn.store" className="hover:text-accent-neon transition-colors font-semibold">Contact Us</a>
           </div>
           <p className="font-semibold">&copy; {new Date().getFullYear()} ClaimSpawn Aggregations. All rights reserved.</p>
           <p className="mt-2 text-[10px] text-gray-600 font-medium leading-relaxed max-w-2xl mx-auto">

@@ -44,7 +44,7 @@ export default function LegalView({ type, onClose }) {
 
               <h2 className="text-xl font-bold text-white mt-4">Who We Are</h2>
               <p>
-                ClaimSpawn was built by a small team of independent developers and passionate gaming advocates. We are dedicated to preservation, discoverability, and accessibility in the gaming community. If you have any inquiries, feedback, or partnerships, feel free to reach out to us at <a href="mailto:support@claimspawn.store" className="text-accent-neon hover:underline">support@claimspawn.store</a>.
+                ClaimSpawn is an independent gaming deals aggregator dedicated to preservation, discoverability, and accessibility in the gaming community. If you have any inquiries, feedback, or partnerships, feel free to reach out to us at <a href="mailto:arnav@claimspawn.store" className="text-accent-neon hover:underline">arnav@claimspawn.store</a>.
               </p>
             </>
           ) : isPrivacy ? (
@@ -54,13 +54,13 @@ export default function LegalView({ type, onClose }) {
               <p>ClaimSpawn ("we," "our," or "us") respects your privacy. We do not require users to create accounts, and we do not collect personally identifiable information (PII) such as names, emails, or phone numbers unless explicitly provided for customer support.</p>
               
               <h2 className="text-xl font-bold text-white mt-4">2. Cookies and Tracking</h2>
-              <p>We may use basic browser cookies and local storage to save your preferences (e.g., currency selections) and to ensure our website functions properly. We use third-party analytics and advertising partners (such as AdCash and Monetag) which may use cookies to serve personalized ads based on your visit to this and other websites.</p>
+              <p>We may use basic browser cookies and local storage to save your preferences (e.g., currency selections) and to ensure our website functions properly. We use third-party analytics and advertising partners (including Google Analytics, Google AdSense, AdCash, and Monetag) which may use cookies to serve personalized ads based on your visit to this and other websites.</p>
               
               <h2 className="text-xl font-bold text-white mt-4">3. Third-Party Links</h2>
               <p>Our website contains links to external websites (Steam, Epic Games, GOG, etc.). We are not responsible for the privacy practices or the content of these external sites. Once you leave our site, this Privacy Policy no longer applies.</p>
               
               <h2 className="text-xl font-bold text-white mt-4">4. Contact Us</h2>
-              <p>If you have questions about this Privacy Policy, please contact us at support@claimspawn.store.</p>
+              <p>If you have questions about this Privacy Policy, please contact us at arnav@claimspawn.store.</p>
             </>
           ) : (
             <>

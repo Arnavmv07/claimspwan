@@ -318,7 +318,7 @@ export default function GameDetail({
                 <Flame class="w-3.5 h-3.5 text-accent-purple" /> ClaimSpawn Aggregator Perspective
               </span>
               <p className="text-xs text-gray-400 leading-relaxed font-semibold">
-                ⭐️ <strong className="text-gray-300">Why we recommend it:</strong> Claiming free games from official storefronts like {game.platform} is a fantastic, zero-risk way to broaden your digital catalog. {game.title} currently scores a strong {game.community_rating > 0 ? `${game.community_rating}/5` : 'high rating'} within the community, making it an absolute must-add to your personal library before the promotional countdown ends!
+                ⭐️ <strong className="text-gray-300">Why we recommend it:</strong> Claiming free games from official storefronts like {game.platform} is a fantastic, zero-risk way to broaden your digital catalog. {game.title} is an absolute must-add to your personal library before the promotional countdown ends!
               </p>
             </div>
 
