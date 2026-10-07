@@ -4,6 +4,7 @@ const path = require('path');
 const geoip = require('geoip-lite');
 const db = require('./database');
 const rssFeed = require('./rssFeed');
+const { requireAdmin } = require('./adminAuth');
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -120,7 +121,7 @@ app.get('/api/claim/:id', async (req, res) => {
 });
 
 // Post a custom game (Admin Panel)
-app.post('/api/games/custom', async (req, res) => {
+app.post('/api/games/custom', requireAdmin, async (req, res) => {
   try {
     const gameData = req.body;
     if (!gameData.title || !gameData.claim_url) {
@@ -135,7 +136,7 @@ app.post('/api/games/custom', async (req, res) => {
 });
 
 // Delete a game listing (Admin Panel)
-app.delete('/api/games/:id', async (req, res) => {
+app.delete('/api/games/:id', requireAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     await db.deleteGame(id);
