@@ -22,7 +22,7 @@ export default function LegalView({ type, onClose }) {
         <div className="space-y-6 text-sm leading-relaxed">
           {isAbout ? (
             <>
-              <p><strong>Last Updated:</strong> June 11, 2026</p>
+              <p><strong>Last Updated:</strong> October 7, 2026</p>
               
               <h2 className="text-xl font-bold text-white mt-4">Our Mission</h2>
               <p>
@@ -49,7 +49,7 @@ export default function LegalView({ type, onClose }) {
             </>
           ) : isPrivacy ? (
             <>
-              <p><strong>Last Updated:</strong> June 10, 2026</p>
+              <p><strong>Last Updated:</strong> October 7, 2026</p>
               <h2 className="text-xl font-bold text-white mt-4">1. Information We Collect</h2>
               <p>ClaimSpawn ("we," "our," or "us") respects your privacy. We do not require users to create accounts, and we do not collect personally identifiable information (PII) such as names, emails, or phone numbers unless explicitly provided for customer support.</p>
               

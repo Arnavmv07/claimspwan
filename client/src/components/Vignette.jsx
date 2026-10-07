@@ -70,7 +70,7 @@ export default function Vignette({
         {/* Progress header */}
         <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-[#00F2FE]">
           <Loader2 class="w-4 h-4 animate-spin text-accent-neon" />
-          <span>Generating Secure Affiliate Claim Link...</span>
+          <span>Generating Secure Claim Link...</span>
         </div>
 
         {/* Live countdown timer widget */}
