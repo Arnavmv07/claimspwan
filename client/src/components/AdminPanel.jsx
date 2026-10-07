@@ -13,6 +13,7 @@ export default function AdminPanel({ onClose }) {
     discount: '100% OFF'
   });
 
+  const [adminKey, setAdminKey] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
@@ -77,13 +78,14 @@ export default function AdminPanel({ onClose }) {
       const res = await fetch('/api/games/custom', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${adminKey}`
         },
         body: JSON.stringify(formData)
       });
 
       if (!res.ok) {
-        throw new Error('Failed to save game');
+        throw new Error(res.status === 401 ? 'Enter the correct admin key to save games.' : 'Failed to save game');
       }
 
       const savedGame = await res.json();
@@ -112,11 +114,12 @@ export default function AdminPanel({ onClose }) {
     setSuccess('');
     try {
       const res = await fetch(`/api/games/${id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${adminKey}` }
       });
 
       if (!res.ok) {
-        throw new Error('Failed to delete game listing');
+        throw new Error(res.status === 401 ? 'Enter the correct admin key to delete games.' : 'Failed to delete game listing');
       }
 
       setGames(games.filter(g => g.id !== id));
@@ -151,6 +154,15 @@ export default function AdminPanel({ onClose }) {
             <h2 className="text-2xl font-black text-white">Manual Game Injector</h2>
             <p className="text-xs text-gray-400 mt-1">Secret Admin Panel to bypass Amazon anti-bot security.</p>
           </div>
+        </div>
+
+        <div className="mb-6">
+          <label htmlFor="admin-key" className="block text-sm text-gray-300 mb-2">Admin key</label>
+          <input id="admin-key" type="password" autoComplete="off" value={adminKey}
+            onChange={e => setAdminKey(e.target.value)}
+            placeholder="Required to add or delete games"
+            className="w-full bg-dark-bg border border-[#24324D] rounded-xl px-4 py-3 text-white" />
+          <p className="text-xs text-gray-400 mt-2">Stored in memory only. Closing this panel clears the key.</p>
         </div>
 
         {/* Live Analytics Dashboard */}
