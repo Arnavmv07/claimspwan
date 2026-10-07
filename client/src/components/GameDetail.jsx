@@ -32,7 +32,7 @@ export default function GameDetail({
         document.title = `Claim ${data.title} for Free on ${data.platform} | ClaimSpawn`;
         const metaDesc = document.querySelector('meta[name="description"]');
         if (metaDesc) {
-          metaDesc.setAttribute('content', `Get a 100% free digital copy of ${data.title} on ${data.platform}. View system requirements, claim steps, and reviews on ClaimSpawn.`);
+          metaDesc.setAttribute('content', `Get a 100% free digital copy of ${data.title} on ${data.platform}. View system requirements and claim steps on ClaimSpawn.`);
         }
       })
       .catch(err => {
